@@ -1,5 +1,5 @@
 // api/proxy.js
-const GAS_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbySON46_F7D-HEwoDWo3Z68Z2l-DZ7-OjMMkHa_r8ETBtJxCXHlgSZsPPfytfA9BrgFzw/exec';
+const GAS_BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyqpisVxKYfBTLk6QQAami7kwlubDw1EjnzQNvtjjDbGo4934yqFB3xig8msoCi86ZJ0w/exec';
 
 async function parseBody(req) {
   return new Promise((resolve, reject) => {
