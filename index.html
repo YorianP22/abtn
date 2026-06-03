@@ -1,0 +1,3233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#2E7D32">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="ABI TANI">
+<meta name="description" content="Sistem Presensi Digital ABI TANI">
+<title>ABI TANI PRESENSI</title>
+
+<!-- PWA Manifest inline -->
+<link rel="manifest" href="data:application/json,{...}">
+
+<!-- Bootstrap 5 -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Bootstrap Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ================================================
+   ABI TANI PRESENSI - Global Styles
+   (KODE CSS SAMA PERSIS DENGAN ASLINYA - TIDAK DIUBAH)
+   ================================================ */
+:root {
+  --green-primary: #2E7D32;
+  --green-light: #4CAF50;
+  --green-pale: #E8F5E9;
+  --green-dark: #1B5E20;
+  --yellow-primary: #FBC02D;
+  --yellow-light: #FFF9C4;
+  --yellow-dark: #F9A825;
+  --white: #FFFFFF;
+  --gray-50: #F8FAFC;
+  --gray-100: #F1F5F9;
+  --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1;
+  --gray-400: #94A3B8;
+  --gray-500: #64748B;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1E293B;
+  --gray-900: #0F172A;
+  --danger: #EF4444;
+  --warning: #F59E0B;
+  --info: #3B82F6;
+  --success: #10B981;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,0.1), 0 4px 10px rgba(0,0,0,0.06);
+  --shadow-xl: 0 20px 50px rgba(0,0,0,0.12);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+  --font-main: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --nav-height: 64px;
+  --bottom-nav: 72px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: var(--font-main);
+  background: var(--gray-50);
+  color: var(--gray-800);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================================================
+   LOADING SCREEN
+   ================================================ */
+#loading-screen {
+  position: fixed; inset: 0;
+  background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-dark) 100%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+#loading-screen.hidden { opacity: 0; visibility: hidden; }
+
+.loading-logo {
+  width: 90px; height: 90px;
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radius-xl);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+  animation: pulse-logo 2s ease-in-out infinite;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255,255,255,0.2);
+}
+@keyframes pulse-logo {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,0.3); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255,255,255,0); }
+}
+.loading-spinner {
+  width: 42px; height: 42px;
+  border: 3px solid rgba(255,255,255,0.25);
+  border-top-color: var(--yellow-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-top: 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ================================================
+   LOGIN PAGE
+   ================================================ */
+#login-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--green-primary) 0%, var(--green-dark) 40%, #0D3B10 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  position: relative; overflow: hidden;
+}
+#login-page::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+  width: 100%; max-width: 400px;
+  box-shadow: var(--shadow-xl);
+  position: relative; z-index: 1;
+  animation: slideUp 0.5s ease-out;
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-header {
+  text-align: center; margin-bottom: 32px;
+}
+.login-logo {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+  border-radius: var(--radius-lg);
+  display: inline-flex; align-items: center; justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(46,125,50,0.3);
+}
+.login-title {
+  font-size: 22px; font-weight: 800;
+  color: var(--green-primary); margin: 0 0 4px;
+  letter-spacing: -0.5px;
+}
+.login-subtitle {
+  font-size: 13px; color: var(--gray-500);
+  font-weight: 400; margin: 0;
+}
+
+.form-label-custom {
+  font-size: 13px; font-weight: 600;
+  color: var(--gray-600); margin-bottom: 6px;
+  display: block;
+}
+.input-group-custom {
+  position: relative; margin-bottom: 16px;
+}
+.input-icon {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); font-size: 16px; z-index: 1;
+}
+.form-input {
+  width: 100%; padding: 12px 14px 12px 42px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 14px;
+  font-weight: 500; color: var(--gray-800);
+  background: var(--gray-50);
+  transition: all 0.2s;
+  outline: none;
+}
+.form-input:focus {
+  border-color: var(--green-primary);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(46,125,50,0.1);
+}
+.btn-eye {
+  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; cursor: pointer;
+  color: var(--gray-400); padding: 0; font-size: 16px;
+}
+.btn-login {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+  color: white; border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 15px;
+  font-weight: 700; cursor: pointer;
+  box-shadow: 0 4px 15px rgba(46,125,50,0.35);
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-login:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(46,125,50,0.4); }
+.btn-login:active { transform: translateY(0); }
+.btn-login:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+/* ================================================
+   APP LAYOUT
+   ================================================ */
+#app {
+  display: none; min-height: 100vh;
+  flex-direction: column; position: relative;
+}
+#app.active { display: flex; }
+
+/* TOP NAVBAR */
+.top-nav {
+  height: var(--nav-height);
+  background: var(--green-primary);
+  display: flex; align-items: center;
+  padding: 0 16px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+.nav-logo {
+  display: flex; align-items: center; gap: 10px;
+  flex: 1;
+}
+.nav-logo-icon {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(10px);
+}
+.nav-logo-text { font-size: 15px; font-weight: 800; color: white; letter-spacing: -0.3px; }
+.nav-logo-sub { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.7); letter-spacing: 0.5px; }
+.nav-actions { display: flex; align-items: center; gap: 8px; }
+.nav-btn {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.12);
+  border: none; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: white; cursor: pointer; font-size: 16px;
+  transition: background 0.2s;
+  text-decoration: none;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+.nav-badge {
+  position: relative;
+}
+.nav-badge::after {
+  content: attr(data-count);
+  position: absolute; top: -4px; right: -4px;
+  background: var(--yellow-primary);
+  color: var(--gray-900);
+  font-size: 9px; font-weight: 800;
+  min-width: 16px; height: 16px;
+  border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+}
+
+/* SIDEBAR (Desktop) */
+.sidebar {
+  width: 260px;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  display: flex; flex-direction: column;
+  position: fixed; left: 0; top: var(--nav-height);
+  height: calc(100vh - var(--nav-height));
+  overflow-y: auto; z-index: 90;
+  transition: transform 0.3s ease;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+}
+.sidebar-hidden { transform: translateX(-100%); }
+
+.sidebar-section-label {
+  font-size: 10px; font-weight: 700; color: var(--gray-400);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 16px 20px 8px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px; margin: 1px 10px;
+  border-radius: var(--radius-md);
+  cursor: pointer; text-decoration: none;
+  color: var(--gray-600); font-size: 13.5px; font-weight: 600;
+  transition: all 0.15s;
+}
+.nav-item:hover {
+  background: var(--green-pale); color: var(--green-primary);
+}
+.nav-item.active {
+  background: var(--green-pale); color: var(--green-primary);
+}
+.nav-item .ni-icon {
+  width: 34px; height: 34px;
+  background: var(--gray-100); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+  transition: all 0.15s;
+}
+.nav-item.active .ni-icon,
+.nav-item:hover .ni-icon {
+  background: var(--green-primary); color: white;
+}
+
+/* MAIN CONTENT */
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 20px;
+  padding-bottom: calc(var(--bottom-nav) + 20px);
+  min-height: calc(100vh - var(--nav-height));
+  transition: margin-left 0.3s;
+}
+@media (max-width: 991px) {
+  .main-content { margin-left: 0; }
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 89; backdrop-filter: blur(2px);
+  }
+  .sidebar-overlay.active { display: block; }
+}
+
+/* BOTTOM NAV (Mobile) */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: var(--bottom-nav);
+  background: var(--white);
+  border-top: 1px solid var(--gray-100);
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+  z-index: 100;
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+@media (max-width: 767px) { .bottom-nav { display: flex; align-items: center; justify-content: space-around; } }
+
+.bottom-nav-item {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 12px; border-radius: var(--radius-md);
+  cursor: pointer; text-decoration: none; flex: 1;
+  transition: all 0.2s; position: relative;
+  color: var(--gray-400);
+}
+.bottom-nav-item.active { color: var(--green-primary); }
+.bottom-nav-item .bni-icon { font-size: 20px; margin-bottom: 2px; }
+.bottom-nav-item .bni-label { font-size: 10px; font-weight: 600; letter-spacing: 0.2px; }
+.bottom-nav-fab {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+  border-radius: var(--radius-full);
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 22px;
+  box-shadow: 0 4px 16px rgba(46,125,50,0.4);
+  position: relative; top: -8px;
+  cursor: pointer; border: none;
+  transition: all 0.2s;
+}
+.bottom-nav-fab:active { transform: scale(0.92); }
+
+/* ================================================
+   PAGE HEADER
+   ================================================ */
+.page-header {
+  margin-bottom: 20px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px;
+}
+.page-title { font-size: 22px; font-weight: 800; color: var(--gray-900); margin: 0 0 4px; letter-spacing: -0.5px; }
+.page-subtitle { font-size: 13px; color: var(--gray-500); margin: 0; font-weight: 400; }
+
+/* ================================================
+   CARDS
+   ================================================ */
+.card-custom {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+  overflow: hidden;
+}
+.card-custom-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: center; gap: 10px;
+}
+.card-custom-header h3 {
+  font-size: 15px; font-weight: 700; color: var(--gray-800); margin: 0;
+}
+.card-custom-body { padding: 20px; }
+
+/* STAT CARDS */
+.stat-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+  transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.stat-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-green::before { background: linear-gradient(90deg, var(--green-primary), var(--green-light)); }
+.stat-yellow::before { background: linear-gradient(90deg, var(--yellow-dark), var(--yellow-primary)); }
+.stat-blue::before { background: linear-gradient(90deg, #1E40AF, var(--info)); }
+.stat-red::before { background: linear-gradient(90deg, #991B1B, var(--danger)); }
+.stat-purple::before { background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
+
+.stat-icon {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; margin-bottom: 12px;
+}
+.stat-icon-green { background: var(--green-pale); color: var(--green-primary); }
+.stat-icon-yellow { background: var(--yellow-light); color: var(--yellow-dark); }
+.stat-icon-blue { background: #EFF6FF; color: var(--info); }
+.stat-icon-red { background: #FEF2F2; color: var(--danger); }
+.stat-icon-purple { background: #F5F3FF; color: #8B5CF6; }
+
+.stat-value { font-size: 28px; font-weight: 800; color: var(--gray-900); line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 12px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ================================================
+   BUTTONS
+   ================================================ */
+.btn-primary-custom {
+  background: linear-gradient(135deg, var(--green-primary), var(--green-light));
+  color: white; border: none;
+  padding: 11px 20px; border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  box-shadow: 0 3px 10px rgba(46,125,50,0.25);
+}
+.btn-primary-custom:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(46,125,50,0.35); }
+.btn-primary-custom:active { transform: translateY(0); }
+.btn-primary-custom:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.btn-secondary-custom {
+  background: var(--white); color: var(--gray-700);
+  border: 1.5px solid var(--gray-200);
+  padding: 10px 20px; border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-secondary-custom:hover { background: var(--gray-50); border-color: var(--gray-300); }
+
+.btn-danger-custom {
+  background: #FEF2F2; color: var(--danger); border: 1.5px solid #FECACA;
+  padding: 10px 20px; border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-danger-custom:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+.btn-yellow-custom {
+  background: linear-gradient(135deg, var(--yellow-dark), var(--yellow-primary));
+  color: var(--gray-900); border: none;
+  padding: 11px 20px; border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  box-shadow: 0 3px 10px rgba(251,192,45,0.3);
+}
+.btn-yellow-custom:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(251,192,45,0.4); }
+
+/* ================================================
+   PRESENSI PAGE
+   ================================================ */
+.presensi-hero {
+  background: linear-gradient(135deg, var(--green-primary) 0%, var(--green-dark) 100%);
+  border-radius: var(--radius-xl);
+  padding: 24px;
+  color: white; margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.presensi-hero::after {
+  content: '';
+  position: absolute; bottom: -30px; right: -20px;
+  width: 120px; height: 120px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.presensi-time {
+  font-family: var(--font-mono);
+  font-size: 42px; font-weight: 500; letter-spacing: -1px;
+  line-height: 1;
+}
+.presensi-date { font-size: 14px; opacity: 0.8; margin-top: 6px; font-weight: 400; }
+
+/* CAMERA */
+.camera-container {
+  position: relative;
+  background: #000;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  max-height: 380px;
+  margin-bottom: 16px;
+}
+#camera-video {
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scaleX(-1); /* Mirror selfie */
+}
+#photo-preview {
+  width: 100%; height: 100%; object-fit: cover;
+  display: none;
+}
+.camera-overlay {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 16px;
+}
+.camera-overlay-top {
+  display: flex; justify-content: space-between; align-items: center;
+}
+.camera-status-badge {
+  background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);
+  color: white; padding: 4px 10px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px;
+}
+.camera-status-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success); animation: pulse-dot 1.5s infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+.camera-frame {
+  position: absolute; inset: 30px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+.camera-frame::before, .camera-frame::after {
+  content: ''; position: absolute;
+  width: 24px; height: 24px; border-color: white;
+  border-style: solid; border-radius: 2px;
+}
+.camera-frame::before { top: -2px; left: -2px; border-width: 3px 0 0 3px; }
+.camera-frame::after { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+
+.camera-watermark {
+  position: absolute; bottom: 12px; left: 0; right: 0;
+  text-align: center;
+  background: rgba(0,0,0,0.5);
+  color: white; padding: 6px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.capture-btn {
+  width: 70px; height: 70px;
+  background: white; border: none;
+  border-radius: 50%; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  transition: all 0.15s;
+  margin: 0 auto;
+  position: relative;
+}
+.capture-btn::before {
+  content: ''; position: absolute; inset: 6px;
+  background: var(--green-primary); border-radius: 50%;
+  transition: all 0.15s;
+}
+.capture-btn:active { transform: scale(0.92); }
+.capture-btn.captured::before { background: var(--success); }
+
+/* ================================================
+   STATUS BADGES
+   ================================================ */
+.badge-custom {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: var(--radius-full);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.3px;
+}
+.badge-success { background: #D1FAE5; color: #065F46; }
+.badge-warning { background: #FEF3C7; color: #92400E; }
+.badge-danger { background: #FEE2E2; color: #991B1B; }
+.badge-info { background: #DBEAFE; color: #1E40AF; }
+.badge-purple { background: #EDE9FE; color: #5B21B6; }
+.badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+/* ================================================
+   LOCATION CARD
+   ================================================ */
+.location-card {
+  background: var(--gray-50); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 14px;
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.location-icon-wrap {
+  width: 40px; height: 40px;
+  background: var(--green-pale); border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--green-primary); font-size: 18px; flex-shrink: 0;
+}
+.location-detail { flex: 1; min-width: 0; }
+.location-name { font-size: 12px; font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.location-addr { font-size: 11px; color: var(--gray-500); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.location-coords { font-size: 10px; color: var(--gray-400); font-family: var(--font-mono); margin-top: 2px; }
+.location-status-in { color: var(--success); font-weight: 700; font-size: 11px; }
+.location-status-out { color: var(--danger); font-weight: 700; font-size: 11px; }
+
+/* ================================================
+   JENIS PRESENSI SELECTOR
+   ================================================ */
+.jenis-presensi-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+  margin-bottom: 16px;
+}
+.jenis-card {
+  background: var(--white); border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 14px;
+  text-align: center; cursor: pointer;
+  transition: all 0.2s; position: relative;
+}
+.jenis-card.selected {
+  border-color: var(--green-primary);
+  background: var(--green-pale);
+}
+.jenis-card.selected::after {
+  content: '✓'; position: absolute; top: 6px; right: 8px;
+  font-size: 12px; font-weight: 800; color: var(--green-primary);
+}
+.jenis-icon { font-size: 26px; margin-bottom: 6px; display: block; }
+.jenis-label { font-size: 12px; font-weight: 700; color: var(--gray-700); }
+
+/* ================================================
+   TABLE
+   ================================================ */
+.table-custom { width: 100%; border-collapse: collapse; }
+.table-custom th {
+  background: var(--gray-50); padding: 10px 14px;
+  font-size: 11px; font-weight: 700; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--gray-200); text-align: left;
+}
+.table-custom td {
+  padding: 12px 14px; font-size: 13px; color: var(--gray-700);
+  border-bottom: 1px solid var(--gray-100); vertical-align: middle;
+}
+.table-custom tr:last-child td { border-bottom: none; }
+.table-custom tr:hover td { background: var(--gray-50); }
+.table-custom-wrap { overflow-x: auto; border-radius: var(--radius-lg); border: 1px solid var(--gray-100); }
+
+/* ================================================
+   FORM ELEMENTS
+   ================================================ */
+.form-group-custom { margin-bottom: 16px; }
+.form-label-sm { font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 6px; display: block; }
+.input-custom {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px;
+  color: var(--gray-800); background: var(--white);
+  transition: all 0.2s; outline: none;
+}
+.input-custom:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+.select-custom {
+  width: 100%; padding: 10px 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px;
+  color: var(--gray-800); background: var(--white);
+  cursor: pointer; outline: none; transition: all 0.2s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394A3B8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; background-size: 16px;
+  padding-right: 36px;
+}
+.select-custom:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+.textarea-custom {
+  width: 100%; padding: 10px 14px; min-height: 90px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-md);
+  font-family: var(--font-main); font-size: 13.5px;
+  color: var(--gray-800); resize: vertical; outline: none;
+  transition: all 0.2s;
+}
+.textarea-custom:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(46,125,50,0.1); }
+
+/* ================================================
+   MODAL
+   ================================================ */
+.modal-custom {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.6); backdrop-filter: blur(4px);
+  display: flex; align-items: flex-end; justify-content: center;
+  z-index: 1000; padding: 0;
+  animation: fadeIn 0.2s;
+  opacity: 0; visibility: hidden; transition: all 0.3s;
+}
+.modal-custom.open { opacity: 1; visibility: visible; }
+.modal-sheet {
+  background: var(--white); width: 100%; max-width: 520px;
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  max-height: 90vh; overflow-y: auto;
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.modal-custom.open .modal-sheet { transform: translateY(0); }
+.modal-handle {
+  width: 40px; height: 4px; background: var(--gray-200);
+  border-radius: 2px; margin: 12px auto 0;
+}
+.modal-header-custom {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: center; gap: 12px;
+}
+.modal-title-custom { font-size: 16px; font-weight: 800; color: var(--gray-900); margin: 0; flex: 1; }
+.modal-close { background: var(--gray-100); border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; color: var(--gray-600); }
+.modal-body-custom { padding: 20px; }
+.modal-footer-custom { padding: 16px 20px; border-top: 1px solid var(--gray-100); display: flex; gap: 10px; }
+
+/* Center modal for desktop */
+@media (min-width: 768px) {
+  .modal-custom { align-items: center; }
+  .modal-sheet { border-radius: var(--radius-xl); max-height: 85vh; }
+  .modal-custom.open .modal-sheet { transform: translateY(0); }
+}
+
+/* ================================================
+   ALERT / NOTIFICATION
+   ================================================ */
+#toast-container {
+  position: fixed; top: 76px; right: 16px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+  max-width: 350px; width: calc(100% - 32px);
+}
+.toast-item {
+  background: var(--white); border-radius: var(--radius-md);
+  padding: 14px 16px; box-shadow: var(--shadow-lg);
+  display: flex; align-items: flex-start; gap: 12px;
+  animation: slideInRight 0.3s ease;
+  border-left: 4px solid transparent;
+}
+.toast-item.success { border-left-color: var(--success); }
+.toast-item.error { border-left-color: var(--danger); }
+.toast-item.warning { border-left-color: var(--warning); }
+.toast-item.info { border-left-color: var(--info); }
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.toast-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.toast-text { flex: 1; }
+.toast-title { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 2px; }
+.toast-msg { font-size: 12px; color: var(--gray-500); }
+.toast-close { background: none; border: none; cursor: pointer; color: var(--gray-400); font-size: 14px; padding: 0; }
+
+/* ================================================
+   CAMERA PERMISSION MODAL
+   ================================================ */
+.permission-modal {
+  position: fixed; inset: 0;
+  background: rgba(15,23,42,0.8); backdrop-filter: blur(8px);
+  display: none; align-items: center; justify-content: center;
+  z-index: 2000; padding: 20px;
+}
+.permission-modal.show { display: flex; }
+.permission-card {
+  background: white; border-radius: var(--radius-xl);
+  padding: 32px; max-width: 360px; width: 100%;
+  text-align: center; box-shadow: var(--shadow-xl);
+}
+.permission-icon {
+  width: 72px; height: 72px;
+  background: #FEF2F2; border-radius: var(--radius-xl);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; margin: 0 auto 20px;
+}
+
+/* ================================================
+   PROFILE PAGE
+   ================================================ */
+.profile-header-bg {
+  background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+  height: 140px; border-radius: var(--radius-xl);
+  position: relative; margin-bottom: 60px;
+}
+.profile-avatar {
+  width: 88px; height: 88px;
+  background: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; color: var(--green-primary);
+  border: 4px solid white; box-shadow: var(--shadow-md);
+  position: absolute; left: 50%; bottom: -44px;
+  transform: translateX(-50%);
+  font-weight: 800;
+}
+
+/* ================================================
+   EMPTY STATE
+   ================================================ */
+.empty-state {
+  text-align: center; padding: 48px 20px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.empty-icon {
+  font-size: 52px; margin-bottom: 16px; opacity: 0.3;
+  color: var(--gray-400);
+}
+.empty-title { font-size: 16px; font-weight: 700; color: var(--gray-600); margin-bottom: 6px; }
+.empty-desc { font-size: 13px; color: var(--gray-400); max-width: 280px; }
+
+/* ================================================
+   CHART
+   ================================================ */
+.chart-bar-container {
+  display: flex; align-items: flex-end; gap: 8px;
+  height: 120px; padding: 0 4px;
+}
+.chart-bar-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.chart-bar {
+  width: 100%; background: var(--green-pale);
+  border-radius: 4px 4px 0 0; position: relative; min-height: 4px;
+  transition: height 0.6s ease;
+  background: linear-gradient(0deg, var(--green-primary), var(--green-light));
+}
+.chart-bar-label { font-size: 10px; color: var(--gray-400); font-weight: 600; }
+.chart-bar-value { font-size: 10px; color: var(--green-primary); font-weight: 700; }
+
+/* ================================================
+   IMPORT EXCEL
+   ================================================ */
+.drop-zone {
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-lg);
+  padding: 40px 20px; text-align: center;
+  cursor: pointer; transition: all 0.2s;
+  background: var(--gray-50);
+}
+.drop-zone:hover, .drop-zone.dragover {
+  border-color: var(--green-primary);
+  background: var(--green-pale);
+}
+.drop-icon { font-size: 40px; color: var(--gray-400); margin-bottom: 12px; }
+.drop-text { font-size: 14px; font-weight: 600; color: var(--gray-600); }
+.drop-hint { font-size: 12px; color: var(--gray-400); margin-top: 4px; }
+
+/* ================================================
+   MISC
+   ================================================ */
+.divider { height: 1px; background: var(--gray-100); margin: 16px 0; }
+.text-green { color: var(--green-primary); }
+.text-yellow { color: var(--yellow-dark); }
+.text-danger { color: var(--danger); }
+.fw-700 { font-weight: 700; }
+.fw-800 { font-weight: 800; }
+.skeleton {
+  background: linear-gradient(90deg, var(--gray-100) 25%, var(--gray-200) 50%, var(--gray-100) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease infinite;
+  border-radius: var(--radius-sm);
+}
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.spinner-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: inline-block;
+}
+
+.fade-in { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.slide-up { animation: slideUp 0.3s ease; }
+
+.map-container {
+  border-radius: var(--radius-md); overflow: hidden;
+  height: 200px; margin-top: 12px;
+  border: 1px solid var(--gray-200);
+}
+
+/* GPS Loading */
+.gps-loading {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--gray-500); padding: 12px 0;
+}
+.gps-spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--gray-200);
+  border-top-color: var(--green-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .main-content { padding: 12px; padding-bottom: calc(var(--bottom-nav) + 16px); }
+  .presensi-time { font-size: 36px; }
+  .stat-value { font-size: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING SCREEN -->
+<div id="loading-screen">
+  <div class="loading-logo">
+    <i class="bi bi-leaf-fill text-white" style="font-size:40px;"></i>
+  </div>
+  <div style="text-align:center;">
+    <div style="color:white;font-size:20px;font-weight:800;letter-spacing:-0.5px;">ABI TANI</div>
+    <div style="color:rgba(255,255,255,0.6);font-size:12px;font-weight:500;letter-spacing:2px;text-transform:uppercase;">PRESENSI</div>
+  </div>
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- TOAST NOTIFICATIONS -->
+<div id="toast-container"></div>
+
+<!-- CAMERA PERMISSION MODAL -->
+<div class="permission-modal" id="camera-permission-modal">
+  <div class="permission-card">
+    <div class="permission-icon">📷</div>
+    <h3 style="font-size:18px;font-weight:800;margin-bottom:10px;color:var(--gray-900);">Izin Kamera Diperlukan</h3>
+    <p style="font-size:14px;color:var(--gray-500);margin-bottom:24px;line-height:1.6;">
+      <strong>ABI TANI PRESENSI</strong> membutuhkan akses kamera untuk melakukan presensi. Silakan izinkan kamera lalu coba kembali.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button class="btn-primary-custom w-100 justify-content-center" onclick="requestCameraPermission()">
+        <i class="bi bi-camera"></i> Izinkan Kamera
+      </button>
+      <button class="btn-secondary-custom w-100 justify-content-center" onclick="closeCameraPermissionModal()">
+        <i class="bi bi-x"></i> Batal
+      </button>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);font-size:12px;color:var(--gray-500);text-align:left;">
+      <strong>Tips:</strong> Buka Pengaturan browser → Izin Situs → Kamera → Izinkan untuk situs ini.
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- LOGIN PAGE -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <div class="login-logo">
+        <i class="bi bi-leaf-fill" style="font-size:30px;color:white;"></i>
+      </div>
+      <h1 class="login-title">ABI TANI PRESENSI</h1>
+      <p class="login-subtitle">Sistem Presensi Digital Karyawan</p>
+    </div>
+
+    <div id="login-error" class="alert alert-danger py-2 px-3 d-none" style="border-radius:var(--radius-md);font-size:13px;"></div>
+
+    <div class="input-group-custom">
+      <label class="form-label-custom">Nomor Induk Karyawan (NIK)</label>
+      <div style="position:relative;">
+        <i class="bi bi-person-badge input-icon"></i>
+        <input type="text" id="login-nik" class="form-input" placeholder="Masukkan NIK" autocomplete="username">
+      </div>
+    </div>
+
+    <div class="input-group-custom" style="margin-bottom:24px;">
+      <label class="form-label-custom">Password</label>
+      <div style="position:relative;">
+        <i class="bi bi-lock input-icon"></i>
+        <input type="password" id="login-password" class="form-input" placeholder="Masukkan Password" autocomplete="current-password">
+        <button class="btn-eye" onclick="togglePassword()" id="eye-btn">
+          <i class="bi bi-eye" id="eye-icon"></i>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="btn-login" onclick="handleLogin()">
+      <i class="bi bi-box-arrow-in-right"></i> Masuk
+    </button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- TOP NAV -->
+  <nav class="top-nav">
+    <div class="nav-logo">
+      <button class="nav-btn" onclick="toggleSidebar()" id="sidebar-toggle">
+        <i class="bi bi-list" style="font-size:20px;"></i>
+      </button>
+      <div style="margin-left:4px;">
+        <div class="nav-logo-text">ABI TANI</div>
+        <div class="nav-logo-sub">PRESENSI</div>
+      </div>
+    </div>
+    <div class="nav-actions">
+      <div class="nav-badge" id="notif-badge" data-count="0" style="display:none;">
+        <button class="nav-btn" onclick="navigateTo('izin-management')">
+          <i class="bi bi-bell"></i>
+        </button>
+      </div>
+      <button class="nav-btn" onclick="navigateTo('profil')" title="Profil">
+        <i class="bi bi-person-circle"></i>
+      </button>
+      <button class="nav-btn" onclick="confirmLogout()" title="Logout" style="background:rgba(239,68,68,0.2);">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div style="display:flex;flex:1;position:relative;">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div id="sidebar-user" style="padding:20px;background:var(--green-pale);margin:10px;border-radius:var(--radius-md);">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;background:var(--green-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:18px;font-weight:800;" id="sidebar-avatar">A</div>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--gray-800);" id="sidebar-nama">Loading...</div>
+            <div style="font-size:11px;color:var(--gray-500);" id="sidebar-role">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Menu -->
+      <div id="admin-menu" style="display:none;">
+        <div class="sidebar-section-label">Admin Panel</div>
+        <a class="nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">
+          <div class="ni-icon"><i class="bi bi-speedometer2"></i></div> Dashboard
+        </a>
+        <a class="nav-item" onclick="navigateTo('data-karyawan')" data-page="data-karyawan">
+          <div class="ni-icon"><i class="bi bi-people"></i></div> Data Karyawan
+        </a>
+        <a class="nav-item" onclick="navigateTo('rekap-presensi')" data-page="rekap-presensi">
+          <div class="ni-icon"><i class="bi bi-calendar-check"></i></div> Rekap Presensi
+        </a>
+        <a class="nav-item" onclick="navigateTo('izin-management')" data-page="izin-management">
+          <div class="ni-icon"><i class="bi bi-file-earmark-check"></i></div> Manajemen Izin
+        </a>
+        <a class="nav-item" onclick="navigateTo('monitoring-lokasi')" data-page="monitoring-lokasi">
+          <div class="ni-icon"><i class="bi bi-geo-alt"></i></div> Monitoring Lokasi
+        </a>
+        <div class="sidebar-section-label">Pengaturan</div>
+        <a class="nav-item" onclick="navigateTo('pengaturan')" data-page="pengaturan">
+          <div class="ni-icon"><i class="bi bi-gear"></i></div> Pengaturan Sistem
+        </a>
+      </div>
+
+      <!-- Karyawan Menu -->
+      <div id="karyawan-menu" style="display:none;">
+        <div class="sidebar-section-label">Menu Utama</div>
+        <a class="nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">
+          <div class="ni-icon"><i class="bi bi-house"></i></div> Dashboard
+        </a>
+        <a class="nav-item" onclick="navigateTo('presensi')" data-page="presensi">
+          <div class="ni-icon"><i class="bi bi-fingerprint"></i></div> Presensi
+        </a>
+        <a class="nav-item" onclick="navigateTo('riwayat')" data-page="riwayat">
+          <div class="ni-icon"><i class="bi bi-clock-history"></i></div> Riwayat
+        </a>
+        <a class="nav-item" onclick="navigateTo('izin')" data-page="izin">
+          <div class="ni-icon"><i class="bi bi-file-earmark-text"></i></div> Pengajuan Izin
+        </a>
+        <div class="sidebar-section-label">Akun</div>
+        <a class="nav-item" onclick="navigateTo('profil')" data-page="profil">
+          <div class="ni-icon"><i class="bi bi-person"></i></div> Profil Saya
+        </a>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content" id="main-content">
+      <!-- Pages rendered here by JS -->
+    </main>
+  </div>
+
+  <!-- BOTTOM NAV (Mobile) -->
+  <nav class="bottom-nav" id="bottom-nav">
+    <div id="karyawan-bottom-nav" style="display:contents;">
+      <a class="bottom-nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">
+        <i class="bi bi-house bni-icon"></i>
+        <span class="bni-label">Home</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('riwayat')" data-page="riwayat">
+        <i class="bi bi-clock-history bni-icon"></i>
+        <span class="bni-label">Riwayat</span>
+      </a>
+      <button class="bottom-nav-fab" onclick="navigateTo('presensi')">
+        <i class="bi bi-fingerprint"></i>
+      </button>
+      <a class="bottom-nav-item" onclick="navigateTo('izin')" data-page="izin">
+        <i class="bi bi-file-earmark-text bni-icon"></i>
+        <span class="bni-label">Izin</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('profil')" data-page="profil">
+        <i class="bi bi-person bni-icon"></i>
+        <span class="bni-label">Profil</span>
+      </a>
+    </div>
+    <div id="admin-bottom-nav" style="display:none;contents;">
+      <a class="bottom-nav-item" onclick="navigateTo('dashboard')" data-page="dashboard">
+        <i class="bi bi-speedometer2 bni-icon"></i>
+        <span class="bni-label">Dashboard</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('data-karyawan')" data-page="data-karyawan">
+        <i class="bi bi-people bni-icon"></i>
+        <span class="bni-label">Karyawan</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('rekap-presensi')" data-page="rekap-presensi">
+        <i class="bi bi-calendar-check bni-icon"></i>
+        <span class="bni-label">Rekap</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('izin-management')" data-page="izin-management">
+        <i class="bi bi-file-earmark-check bni-icon"></i>
+        <span class="bni-label">Izin</span>
+      </a>
+      <a class="bottom-nav-item" onclick="navigateTo('pengaturan')" data-page="pengaturan">
+        <i class="bi bi-gear bni-icon"></i>
+        <span class="bni-label">Pengaturan</span>
+      </a>
+    </div>
+  </nav>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<!-- XLSX Library for import -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+// ============================================================
+// ABI TANI PRESENSI - Frontend JavaScript (dengan fetch ke GAS)
+// ============================================================
+
+// GANTI URL INI DENGAN URL DEPLOY BACKEND GAS ANDA
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbySON46_F7D-HEwoDWo3Z68Z2l-DZ7-OjMMkHa_r8ETBtJxCXHlgSZsPPfytfA9BrgFzw/exec';
+
+let currentUser = null;
+let currentPage = '';
+let cameraStream = null;
+let cameraRetryCount = 0;
+let currentLocation = null;
+let photoTaken = false;
+let capturedImageBase64 = null;
+let selectedJenis = 'masuk';
+
+// Fungsi panggil API menggunakan fetch (menggantikan google.script.run)
+async function callAPI(action, data = {}) {
+  try {
+    const response = await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action, data })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('API call failed:', error);
+    return { success: false, message: 'Gagal terhubung ke server: ' + error.message };
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  await checkExistingSession();
+});
+
+async function checkExistingSession() {
+  const token = localStorage.getItem('at_token');
+  const userData = localStorage.getItem('at_user');
+  
+  if (token && userData) {
+    try {
+      const result = await callAPI('checkSession', { token });
+      if (result.success) {
+        currentUser = result.data;
+        showApp();
+        navigateTo('dashboard');
+        return;
+      }
+    } catch(e) {}
+  }
+  
+  hideLoading();
+  showLoginPage();
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+async function handleLogin() {
+  const nik = document.getElementById('login-nik').value.trim();
+  const password = document.getElementById('login-password').value;
+  const btn = document.getElementById('btn-login');
+  const errorDiv = document.getElementById('login-error');
+  
+  if (!nik || !password) {
+    showError(errorDiv, 'NIK dan password harus diisi');
+    return;
+  }
+  
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Memproses...';
+  errorDiv.classList.add('d-none');
+  
+  try {
+    const result = await callAPI('login', { nik, password });
+    
+    if (result.success) {
+      currentUser = result.data;
+      localStorage.setItem('at_token', currentUser.token);
+      localStorage.setItem('at_user', JSON.stringify(currentUser));
+      showApp();
+      navigateTo('dashboard');
+      showToast('success', 'Selamat Datang!', `Halo, ${currentUser.nama}!`);
+    } else {
+      showError(errorDiv, result.message);
+    }
+  } catch(e) {
+    showError(errorDiv, 'Gagal terhubung ke server. Coba lagi.');
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Masuk';
+}
+
+function showError(el, msg) {
+  el.textContent = msg;
+  el.classList.remove('d-none');
+}
+
+function togglePassword() {
+  const input = document.getElementById('login-password');
+  const icon = document.getElementById('eye-icon');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'bi bi-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'bi bi-eye';
+  }
+}
+
+function confirmLogout() {
+  showConfirmModal('Konfirmasi Logout', 'Yakin ingin keluar dari aplikasi?', async () => {
+    const token = localStorage.getItem('at_token');
+    if (token) await callAPI('logout', { token });
+    localStorage.removeItem('at_token');
+    localStorage.removeItem('at_user');
+    currentUser = null;
+    stopCamera();
+    document.getElementById('app').classList.remove('active');
+    document.getElementById('app').style.display = 'none';
+    showLoginPage();
+  });
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigateTo(page) {
+  closeSidebar();
+  currentPage = page;
+  
+  document.querySelectorAll('[data-page]').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  
+  if (page !== 'presensi') stopCamera();
+  
+  const content = document.getElementById('main-content');
+  content.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:60px 20px;"><div class="loading-spinner" style="border-color:var(--gray-200);border-top-color:var(--green-primary);"></div></div>';
+  
+  setTimeout(() => {
+    switch(page) {
+      case 'dashboard': renderDashboard(); break;
+      case 'presensi': renderPresensi(); break;
+      case 'riwayat': renderRiwayat(); break;
+      case 'izin': renderIzin(); break;
+      case 'profil': renderProfil(); break;
+      case 'data-karyawan': renderDataKaryawan(); break;
+      case 'rekap-presensi': renderRekapPresensi(); break;
+      case 'izin-management': renderIzinManagement(); break;
+      case 'monitoring-lokasi': renderMonitoringLokasi(); break;
+      case 'pengaturan': renderPengaturan(); break;
+      default: renderDashboard();
+    }
+  }, 50);
+}
+
+// ============================================================
+// SHOW/HIDE APP
+// ============================================================
+function showApp() {
+  hideLoading();
+  document.getElementById('login-page').style.display = 'none';
+  const app = document.getElementById('app');
+  app.classList.add('active');
+  app.style.display = 'flex';
+  
+  document.getElementById('sidebar-nama').textContent = currentUser.nama;
+  document.getElementById('sidebar-role').textContent = currentUser.role === 'admin' ? '👑 Administrator' : currentUser.jabatan;
+  document.getElementById('sidebar-avatar').textContent = currentUser.nama.charAt(0).toUpperCase();
+  
+  if (currentUser.role === 'admin') {
+    document.getElementById('admin-menu').style.display = 'block';
+    document.getElementById('karyawan-menu').style.display = 'none';
+    document.getElementById('karyawan-bottom-nav').style.display = 'none';
+    document.getElementById('admin-bottom-nav').style.display = 'contents';
+    document.getElementById('notif-badge').style.display = 'block';
+  } else {
+    document.getElementById('admin-menu').style.display = 'none';
+    document.getElementById('karyawan-menu').style.display = 'block';
+    document.getElementById('karyawan-bottom-nav').style.display = 'contents';
+    document.getElementById('admin-bottom-nav').style.display = 'none';
+    document.getElementById('notif-badge').style.display = 'none';
+  }
+}
+
+function showLoginPage() {
+  document.getElementById('login-page').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-nik').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-error').classList.add('d-none');
+}
+
+function hideLoading() {
+  document.getElementById('loading-screen').classList.add('hidden');
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('active');
+}
+
+// ============================================================
+// DASHBOARD - KARYAWAN
+// ============================================================
+async function renderDashboard() {
+  if (currentUser.role === 'admin') {
+    renderDashboardAdmin();
+    return;
+  }
+  
+  const content = document.getElementById('main-content');
+  const now = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const tanggal = now.toLocaleDateString('id-ID', opts);
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="presensi-hero">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div>
+            <div style="font-size:13px;opacity:0.8;margin-bottom:6px;font-weight:500;">${tanggal}</div>
+            <div class="presensi-time" id="live-clock">--:--:--</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:11px;opacity:0.7;margin-bottom:4px;">Halo,</div>
+            <div style="font-size:15px;font-weight:800;">${currentUser.nama.split(' ')[0]}</div>
+            <div style="font-size:11px;opacity:0.7;">${currentUser.jabatan}</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="dashboard-status" class="card-custom mb-3">
+        <div class="card-custom-body" style="padding:16px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <i class="bi bi-calendar-check" style="color:var(--green-primary);font-size:18px;"></i>
+            <span style="font-weight:700;font-size:14px;">Status Hari Ini</span>
+          </div>
+          <div id="status-content"><div class="skeleton" style="height:60px;border-radius:8px;"></div></div>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-bar-chart" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Rekap Bulan Ini</h3>
+        </div>
+        <div class="card-custom-body" id="rekap-content">
+          <div class="skeleton" style="height:80px;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-clock-history" style="color:var(--yellow-dark);font-size:18px;"></i>
+          <h3>Izin Terbaru</h3>
+          <button class="btn-secondary-custom ms-auto" style="padding:4px 12px;font-size:12px;" onclick="navigateTo('izin')">Lihat Semua</button>
+        </div>
+        <div class="card-custom-body" id="izin-content">
+          <div class="skeleton" style="height:60px;border-radius:8px;"></div>
+        </div>
+      </div>
+    </div>`;
+  
+  startClock();
+  loadDashboardData();
+}
+
+async function loadDashboardData() {
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('getDashboardKaryawan', { token });
+    if (result.success) {
+      const d = result.data;
+      
+      // Status Hari Ini
+      const statusContent = document.getElementById('status-content');
+      if (statusContent) {
+        const masuk = d.statusHariIni?.masuk;
+        const pulang = d.statusHariIni?.pulang;
+        statusContent.innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div style="padding:12px;background:${masuk ? 'var(--green-pale)' : 'var(--gray-50)'};border-radius:var(--radius-md);border:1px solid ${masuk ? 'var(--green-light)' : 'var(--gray-200)'};">
+              <div style="font-size:20px;margin-bottom:4px;">${masuk ? '✅' : '⏰'}</div>
+              <div style="font-size:12px;font-weight:700;color:${masuk ? 'var(--green-primary)' : 'var(--gray-500)'};">${masuk ? 'Sudah Masuk' : 'Belum Masuk'}</div>
+              ${d.presensiHariIni?.find(p => p.jenisPresensi === 'masuk') ? `<div style="font-size:11px;color:var(--gray-400);">${d.presensiHariIni.find(p => p.jenisPresensi === 'masuk').jam}</div>` : ''}
+            </div>
+            <div style="padding:12px;background:${pulang ? 'var(--yellow-light)' : 'var(--gray-50)'};border-radius:var(--radius-md);border:1px solid ${pulang ? 'var(--yellow-primary)' : 'var(--gray-200)'};">
+              <div style="font-size:20px;margin-bottom:4px;">${pulang ? '🏠' : '🏃'}</div>
+              <div style="font-size:12px;font-weight:700;color:${pulang ? 'var(--yellow-dark)' : 'var(--gray-500)'};">${pulang ? 'Sudah Pulang' : 'Belum Pulang'}</div>
+              ${d.presensiHariIni?.find(p => p.jenisPresensi === 'pulang') ? `<div style="font-size:11px;color:var(--gray-400);">${d.presensiHariIni.find(p => p.jenisPresensi === 'pulang').jam}</div>` : ''}
+            </div>
+          </div>`;
+      }
+      
+      // Rekap Bulan
+      const rekapContent = document.getElementById('rekap-content');
+      if (rekapContent) {
+        rekapContent.innerHTML = `
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+            <div style="padding:12px;background:var(--green-pale);border-radius:var(--radius-md);">
+              <div style="font-size:22px;font-weight:800;color:var(--green-primary);">${d.hadirBulanIni || 0}</div>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:600;">Hadir</div>
+            </div>
+            <div style="padding:12px;background:var(--yellow-light);border-radius:var(--radius-md);">
+              <div style="font-size:22px;font-weight:800;color:var(--yellow-dark);">${d.izinBulanIni || 0}</div>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:600;">Izin</div>
+            </div>
+            <div style="padding:12px;background:#FEF2F2;border-radius:var(--radius-md);">
+              <div style="font-size:22px;font-weight:800;color:var(--danger);">${d.terlambatBulanIni || 0}</div>
+              <div style="font-size:11px;color:var(--gray-500);font-weight:600;">Terlambat</div>
+            </div>
+          </div>`;
+      }
+      
+      // Izin Terakhir
+      const izinContent = document.getElementById('izin-content');
+      if (izinContent) {
+        if (!d.izinTerakhir || d.izinTerakhir.length === 0) {
+          izinContent.innerHTML = '<div class="empty-state" style="padding:24px;"><div class="empty-icon" style="font-size:36px;">📋</div><div class="empty-title">Belum ada izin</div></div>';
+        } else {
+          izinContent.innerHTML = d.izinTerakhir.map(iz => `
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);">
+              <div>
+                <div style="font-size:13px;font-weight:600;">${getJenisIzinLabel(iz.jenis)}</div>
+                <div style="font-size:11px;color:var(--gray-400);">${formatDate(iz.tanggal)}</div>
+              </div>
+              <span class="badge-custom ${getStatusBadgeClass(iz.status)}">${iz.status}</span>
+            </div>`).join('');
+        }
+      }
+    }
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+// ============================================================
+// DASHBOARD - ADMIN
+// ============================================================
+async function renderDashboardAdmin() {
+  const content = document.getElementById('main-content');
+  const now = new Date();
+  const tanggal = now.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Dashboard Admin</h1>
+          <p class="page-subtitle">${tanggal}</p>
+        </div>
+        <button class="btn-primary-custom" onclick="exportPresensiPDF()">
+          <i class="bi bi-download"></i> Export
+        </button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;" id="stats-grid">
+        ${[1,2,3,4,5,6].map(() => `<div class="skeleton" style="height:110px;border-radius:16px;"></div>`).join('')}
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-graph-up" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Presensi 7 Hari Terakhir</h3>
+        </div>
+        <div class="card-custom-body" id="chart-container">
+          <div class="skeleton" style="height:140px;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-lightning" style="color:var(--yellow-dark);font-size:18px;"></i>
+          <h3>Aksi Cepat</h3>
+        </div>
+        <div class="card-custom-body">
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
+            <button class="btn-primary-custom justify-content-center" style="padding:14px;" onclick="navigateTo('data-karyawan')">
+              <i class="bi bi-person-plus"></i> Tambah Karyawan
+            </button>
+            <button class="btn-yellow-custom justify-content-center" style="padding:14px;" onclick="navigateTo('rekap-presensi')">
+              <i class="bi bi-file-earmark-spreadsheet"></i> Rekap Presensi
+            </button>
+            <button class="btn-secondary-custom justify-content-center" style="padding:14px;" onclick="navigateTo('izin-management')">
+              <i class="bi bi-file-earmark-check"></i> Kelola Izin
+            </button>
+            <button class="btn-secondary-custom justify-content-center" style="padding:14px;" onclick="navigateTo('monitoring-lokasi')">
+              <i class="bi bi-map"></i> Monitoring Lokasi
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  
+  loadAdminDashboard();
+}
+
+async function loadAdminDashboard() {
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('getDashboardAdmin', { token });
+    if (result.success) {
+      const d = result.data;
+      
+      if (d.izinPending > 0) {
+        document.getElementById('notif-badge').setAttribute('data-count', d.izinPending);
+        document.getElementById('notif-badge').style.display = 'block';
+      }
+      
+      const statsGrid = document.getElementById('stats-grid');
+      if (statsGrid) {
+        statsGrid.innerHTML = `
+          <div class="stat-card stat-green">
+            <div class="stat-icon stat-icon-green"><i class="bi bi-people"></i></div>
+            <div class="stat-value">${d.totalKaryawan || 0}</div>
+            <div class="stat-label">Total Karyawan</div>
+          </div>
+          <div class="stat-card stat-green">
+            <div class="stat-icon stat-icon-green"><i class="bi bi-person-check"></i></div>
+            <div class="stat-value">${d.hadirHariIni || 0}</div>
+            <div class="stat-label">Hadir Hari Ini</div>
+          </div>
+          <div class="stat-card stat-yellow">
+            <div class="stat-icon stat-icon-yellow"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="stat-value">${d.izinHariIni || 0}</div>
+            <div class="stat-label">Izin Hari Ini</div>
+          </div>
+          <div class="stat-card stat-blue">
+            <div class="stat-icon stat-icon-blue"><i class="bi bi-geo-alt"></i></div>
+            <div class="stat-value">${d.dinasLuarHariIni || 0}</div>
+            <div class="stat-label">Dinas Luar</div>
+          </div>
+          <div class="stat-card stat-purple">
+            <div class="stat-icon stat-icon-purple"><i class="bi bi-clock-history"></i></div>
+            <div class="stat-value">${d.setengahHariHariIni || 0}</div>
+            <div class="stat-label">Setengah Hari</div>
+          </div>
+          <div class="stat-card stat-red">
+            <div class="stat-icon stat-icon-red"><i class="bi bi-bell"></i></div>
+            <div class="stat-value">${d.izinPending || 0}</div>
+            <div class="stat-label">Izin Pending</div>
+          </div>`;
+      }
+      
+      const chartContainer = document.getElementById('chart-container');
+      if (chartContainer && d.grafikHarian) {
+        const max = Math.max(...d.grafikHarian.map(g => g.hadir), 1);
+        chartContainer.innerHTML = `
+          <div class="chart-bar-container">
+            ${d.grafikHarian.map(g => `
+              <div class="chart-bar-item">
+                <div class="chart-bar-value">${g.hadir}</div>
+                <div class="chart-bar" style="height:${Math.max((g.hadir/max)*100, 4)}%;"></div>
+                <div class="chart-bar-label">${g.tanggal}</div>
+              </div>`).join('')}
+          </div>`;
+      }
+    }
+  } catch(e) { console.error(e); }
+}
+
+// ============================================================
+// PRESENSI PAGE
+// ============================================================
+function renderPresensi() {
+  const content = document.getElementById('main-content');
+  const now = new Date();
+  const tanggal = now.toLocaleDateString('id-ID', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  
+  photoTaken = false;
+  capturedImageBase64 = null;
+  selectedJenis = 'masuk';
+  currentLocation = null;
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="presensi-hero" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:12px;opacity:0.75;margin-bottom:4px;font-weight:500;">${tanggal}</div>
+            <div class="presensi-time" id="live-clock">--:--:--</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-size:12px;opacity:0.8;font-weight:600;">${currentUser.nama}</div>
+            <div style="font-size:10px;opacity:0.6;">${currentUser.divisi}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-list-check" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Jenis Presensi</h3>
+        </div>
+        <div class="card-custom-body" style="padding:16px;">
+          <div class="jenis-presensi-grid">
+            ${[
+              { id:'masuk', icon:'🏢', label:'Masuk' },
+              { id:'pulang', icon:'🏠', label:'Pulang' },
+              { id:'izin', icon:'📋', label:'Izin' },
+              { id:'setengah_hari', icon:'⏰', label:'Setengah Hari' },
+              { id:'dinas_luar', icon:'🚗', label:'Dinas Luar' },
+            ].map(j => `
+              <div class="jenis-card ${j.id === 'masuk' ? 'selected' : ''}" onclick="selectJenis('${j.id}', this)" data-jenis="${j.id}">
+                <span class="jenis-icon">${j.icon}</span>
+                <div class="jenis-label">${j.label}</div>
+              </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3" id="camera-section">
+        <div class="card-custom-header">
+          <i class="bi bi-camera" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Foto Selfie</h3>
+          <span class="badge-custom badge-warning ms-auto" id="photo-status">Wajib</span>
+        </div>
+        <div class="card-custom-body" style="padding:16px;">
+          <div class="camera-container" id="camera-container">
+            <video id="camera-video" autoplay playsinline muted></video>
+            <img id="photo-preview" src="" alt="Preview">
+            <div class="camera-overlay">
+              <div class="camera-overlay-top">
+                <div class="camera-status-badge" id="cam-status-badge">
+                  <div class="dot" id="cam-dot"></div>
+                  <span id="cam-status-text">Memuat kamera...</span>
+                </div>
+              </div>
+            </div>
+            <div class="camera-frame"></div>
+            <div class="camera-watermark" id="camera-watermark">
+              📍 Memuat lokasi... | ${currentUser.nama}
+            </div>
+          </div>
+          
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <button class="btn-primary-custom flex-1 justify-content-center" id="capture-btn" onclick="capturePhoto()" disabled>
+              <i class="bi bi-camera"></i> <span id="capture-label">Ambil Foto</span>
+            </button>
+            <button class="btn-secondary-custom flex-1 justify-content-center" id="retake-btn" onclick="retakePhoto()" style="display:none;">
+              <i class="bi bi-arrow-counterclockwise"></i> Ulangi
+            </button>
+          </div>
+
+          <div id="location-container">
+            <div class="gps-loading" id="gps-loading">
+              <div class="gps-spinner"></div>
+              <span>Mendapatkan lokasi GPS...</span>
+            </div>
+            <div id="location-card" style="display:none;"></div>
+          </div>
+
+          <div style="margin-top:14px;">
+            <label class="form-label-sm">Keterangan (Opsional)</label>
+            <textarea id="presensi-keterangan" class="textarea-custom" placeholder="Tambahkan keterangan..." style="min-height:70px;"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn-primary-custom w-100 justify-content-center" style="padding:16px;font-size:15px;" id="submit-btn" onclick="submitPresensi()" disabled>
+        <i class="bi bi-check-circle"></i> Kirim Presensi
+      </button>
+    </div>`;
+  
+  startClock();
+  startCamera();
+  getLocation();
+}
+
+function selectJenis(jenis, el) {
+  selectedJenis = jenis;
+  document.querySelectorAll('.jenis-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  
+  if (jenis === 'izin') {
+    navigateTo('izin');
+    return;
+  }
+  checkSubmitReady();
+}
+
+// CAMERA
+async function startCamera() {
+  cameraRetryCount = 0;
+  await initCamera();
+}
+
+async function initCamera() {
+  const video = document.getElementById('camera-video');
+  const captureBtn = document.getElementById('capture-btn');
+  const statusText = document.getElementById('cam-status-text');
+  const dot = document.getElementById('cam-dot');
+  
+  if (!video) return;
+  
+  try {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+    }
+    
+    const constraints = {
+      video: {
+        facingMode: 'user',
+        width: { ideal: 1280, max: 1920 },
+        height: { ideal: 720, max: 1080 }
+      }
+    };
+    
+    cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+    video.srcObject = cameraStream;
+    await video.play();
+    
+    if (statusText) statusText.textContent = 'Kamera Aktif';
+    if (dot) { dot.style.background = 'var(--success)'; }
+    if (captureBtn) { captureBtn.disabled = false; }
+    
+    cameraRetryCount = 0;
+  } catch(err) {
+    console.error('Camera error:', err);
+    
+    if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      document.getElementById('camera-permission-modal').classList.add('show');
+    } else if (cameraRetryCount < 3) {
+      cameraRetryCount++;
+      if (statusText) statusText.textContent = `Coba ulang... (${cameraRetryCount}/3)`;
+      setTimeout(initCamera, 1500);
+    } else {
+      if (statusText) statusText.textContent = 'Kamera tidak tersedia';
+      if (dot) dot.style.background = 'var(--danger)';
+      showToast('error', 'Kamera Error', 'Tidak dapat mengakses kamera. Periksa izin browser Anda.');
+    }
+  }
+}
+
+function stopCamera() {
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+}
+
+async function requestCameraPermission() {
+  document.getElementById('camera-permission-modal').classList.remove('show');
+  cameraRetryCount = 0;
+  await initCamera();
+}
+
+function closeCameraPermissionModal() {
+  document.getElementById('camera-permission-modal').classList.remove('show');
+}
+
+function capturePhoto() {
+  const video = document.getElementById('camera-video');
+  const preview = document.getElementById('photo-preview');
+  const captureBtn = document.getElementById('capture-btn');
+  const retakeBtn = document.getElementById('retake-btn');
+  const photoStatus = document.getElementById('photo-status');
+  
+  if (!video || !cameraStream) {
+    showToast('error', 'Kamera', 'Kamera belum aktif');
+    return;
+  }
+  
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+  
+  const ctx = canvas.getContext('2d');
+  
+  ctx.translate(canvas.width, 0);
+  ctx.scale(-1, 1);
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  
+  const now = new Date();
+  const timeStr = now.toLocaleString('id-ID');
+  ctx.fillStyle = 'rgba(0,0,0,0.55)';
+  ctx.fillRect(0, canvas.height - 50, canvas.width, 50);
+  ctx.fillStyle = 'white';
+  ctx.font = `bold ${canvas.width > 400 ? 14 : 11}px Plus Jakarta Sans, sans-serif`;
+  ctx.textAlign = 'left';
+  ctx.fillText(`${currentUser.nama} | ${timeStr}`, 10, canvas.height - 28);
+  if (currentLocation) {
+    ctx.font = `${canvas.width > 400 ? 12 : 10}px Plus Jakarta Sans, sans-serif`;
+    ctx.fillText(`📍 ${currentLocation.address?.substring(0, 60) || `${currentLocation.lat.toFixed(6)}, ${currentLocation.lng.toFixed(6)}`}`, 10, canvas.height - 10);
+  }
+  
+  capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
+  
+  preview.src = capturedImageBase64;
+  preview.style.display = 'block';
+  video.style.display = 'none';
+  
+  photoTaken = true;
+  captureBtn.style.display = 'none';
+  retakeBtn.style.display = 'flex';
+  if (photoStatus) { photoStatus.textContent = '✓ Diambil'; photoStatus.className = 'badge-custom badge-success ms-auto'; }
+  
+  stopCamera();
+  checkSubmitReady();
+  showToast('success', 'Foto Diambil', 'Foto selfie berhasil diambil');
+}
+
+function retakePhoto() {
+  const video = document.getElementById('camera-video');
+  const preview = document.getElementById('photo-preview');
+  const captureBtn = document.getElementById('capture-btn');
+  const retakeBtn = document.getElementById('retake-btn');
+  const photoStatus = document.getElementById('photo-status');
+  
+  preview.style.display = 'none';
+  preview.src = '';
+  video.style.display = 'block';
+  
+  captureBtn.style.display = 'flex';
+  retakeBtn.style.display = 'none';
+  if (photoStatus) { photoStatus.textContent = 'Wajib'; photoStatus.className = 'badge-custom badge-warning ms-auto'; }
+  
+  photoTaken = false;
+  capturedImageBase64 = null;
+  checkSubmitReady();
+  
+  initCamera();
+}
+
+// LOCATION
+function getLocation() {
+  if (!navigator.geolocation) {
+    showLocationError('GPS tidak didukung browser ini');
+    return;
+  }
+  
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lng = pos.coords.longitude;
+      currentLocation = { lat, lng };
+      
+      const watermark = document.getElementById('camera-watermark');
+      if (watermark) watermark.textContent = `📍 ${lat.toFixed(5)}, ${lng.toFixed(5)} | ${currentUser.nama}`;
+      
+      try {
+        const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`);
+        const data = await resp.json();
+        currentLocation.address = data.display_name;
+        currentLocation.mapsLink = `https://maps.google.com/?q=${lat},${lng}`;
+        
+        if (watermark) watermark.textContent = `📍 ${data.display_name?.substring(0, 80)} | ${currentUser.nama}`;
+        
+        showLocationCard(lat, lng, data.display_name);
+      } catch(e) {
+        showLocationCard(lat, lng, `${lat.toFixed(6)}, ${lng.toFixed(6)}`);
+      }
+      
+      document.getElementById('gps-loading').style.display = 'none';
+      checkSubmitReady();
+    },
+    (err) => {
+      showLocationError('Tidak dapat mengambil lokasi: ' + err.message);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
+}
+
+function showLocationCard(lat, lng, address) {
+  const card = document.getElementById('location-card');
+  if (!card) return;
+  
+  card.style.display = 'block';
+  card.innerHTML = `
+    <div class="location-card">
+      <div class="location-icon-wrap"><i class="bi bi-geo-alt-fill"></i></div>
+      <div class="location-detail">
+        <div class="location-name">Lokasi Presensi</div>
+        <div class="location-addr" title="${address}">${address}</div>
+        <div class="location-coords">${lat.toFixed(6)}, ${lng.toFixed(6)}</div>
+      </div>
+      <a href="https://maps.google.com/?q=${lat},${lng}" target="_blank" class="nav-btn" style="background:var(--green-pale);color:var(--green-primary);width:36px;height:36px;flex-shrink:0;">
+        <i class="bi bi-map"></i>
+      </a>
+    </div>`;
+}
+
+function showLocationError(msg) {
+  const gpsLoading = document.getElementById('gps-loading');
+  if (gpsLoading) gpsLoading.innerHTML = `<i class="bi bi-exclamation-triangle text-warning"></i> <span style="color:var(--danger);">${msg}</span>`;
+}
+
+function checkSubmitReady() {
+  const submitBtn = document.getElementById('submit-btn');
+  if (!submitBtn) return;
+  submitBtn.disabled = !photoTaken;
+}
+
+async function submitPresensi() {
+  if (!photoTaken || !capturedImageBase64) {
+    showToast('warning', 'Foto Diperlukan', 'Harap ambil foto selfie terlebih dahulu');
+    return;
+  }
+  
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Mengirim...';
+  
+  const token = localStorage.getItem('at_token');
+  const keterangan = document.getElementById('presensi-keterangan')?.value || '';
+  
+  try {
+    const result = await callAPI('submitPresensi', {
+      token,
+      jenisPresensi: selectedJenis,
+      latitude: currentLocation?.lat || null,
+      longitude: currentLocation?.lng || null,
+      alamat: currentLocation?.address || '',
+      fotoBase64: capturedImageBase64,
+      keterangan
+    });
+    
+    if (result.success) {
+      showToast('success', 'Presensi Berhasil! ✅', result.message);
+      
+      const content = document.getElementById('main-content');
+      content.innerHTML = `
+        <div class="fade-in" style="text-align:center;padding:40px 20px;">
+          <div style="font-size:80px;margin-bottom:20px;">✅</div>
+          <h2 style="font-size:22px;font-weight:800;color:var(--green-primary);margin-bottom:8px;">Presensi Berhasil!</h2>
+          <p style="color:var(--gray-500);margin-bottom:8px;">${getJenisPresensiLabel(selectedJenis)}</p>
+          <p style="font-size:20px;font-weight:700;color:var(--gray-800);font-family:var(--font-mono);">${result.data.jam}</p>
+          <p style="font-size:13px;color:var(--gray-400);">${result.data.tanggal}</p>
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:6px 16px;background:${result.data.statusLokasi === 'Dalam Area' ? 'var(--green-pale)' : '#FEF2F2'};border-radius:var(--radius-full);margin:12px 0;">
+            <i class="bi bi-${result.data.statusLokasi === 'Dalam Area' ? 'check-circle-fill text-success' : 'exclamation-circle-fill text-danger'}"></i>
+            <span style="font-size:12px;font-weight:700;color:${result.data.statusLokasi === 'Dalam Area' ? 'var(--success)' : 'var(--danger)'};">${result.data.statusLokasi} (${result.data.jarak}m)</span>
+          </div>
+          <div style="margin-top:24px;display:flex;flex-direction:column;gap:10px;max-width:280px;margin-left:auto;margin-right:auto;">
+            <button class="btn-primary-custom w-100 justify-content-center" onclick="navigateTo('dashboard')">
+              <i class="bi bi-house"></i> Kembali ke Dashboard
+            </button>
+            <button class="btn-secondary-custom w-100 justify-content-center" onclick="navigateTo('riwayat')">
+              <i class="bi bi-clock-history"></i> Lihat Riwayat
+            </button>
+          </div>
+        </div>`;
+    } else {
+      showToast('error', 'Presensi Gagal', result.message);
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-check-circle"></i> Kirim Presensi';
+    }
+  } catch(e) {
+    showToast('error', 'Error', 'Gagal mengirim presensi: ' + e.message);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="bi bi-check-circle"></i> Kirim Presensi';
+  }
+}
+
+// ============================================================
+// RIWAYAT PRESENSI
+// ============================================================
+async function renderRiwayat() {
+  const content = document.getElementById('main-content');
+  const now = new Date();
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Riwayat Presensi</h1>
+          <p class="page-subtitle">Presensi Anda</p>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-body" style="padding:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <label class="form-label-sm">Bulan</label>
+              <select class="select-custom" id="filter-bulan">
+                ${Array.from({length:12},(_,i) => `<option value="${i+1}" ${i+1 === now.getMonth()+1 ? 'selected' : ''}>${['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][i]}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="form-label-sm">Tahun</label>
+              <select class="select-custom" id="filter-tahun">
+                ${[now.getFullYear()-1, now.getFullYear()].map(y => `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary-custom mt-3 w-100 justify-content-center" onclick="loadRiwayat()">
+            <i class="bi bi-search"></i> Tampilkan
+          </button>
+        </div>
+      </div>
+
+      <div id="riwayat-list"></div>
+    </div>`;
+  
+  loadRiwayat();
+}
+
+async function loadRiwayat() {
+  const token = localStorage.getItem('at_token');
+  const bulan = document.getElementById('filter-bulan')?.value;
+  const tahun = document.getElementById('filter-tahun')?.value;
+  const container = document.getElementById('riwayat-list');
+  
+  if (!container) return;
+  container.innerHTML = '<div class="skeleton" style="height:200px;border-radius:16px;"></div>';
+  
+  try {
+    const result = await callAPI('getRiwayatPresensi', { token, bulan, tahun });
+    
+    if (result.success && result.data.length > 0) {
+      const grouped = {};
+      result.data.forEach(p => {
+        if (!grouped[p.tanggal]) grouped[p.tanggal] = [];
+        grouped[p.tanggal].push(p);
+      });
+      
+      container.innerHTML = Object.entries(grouped).sort((a,b) => b[0].localeCompare(a[0])).map(([tanggal, items]) => `
+        <div class="card-custom mb-2">
+          <div class="card-custom-header" style="padding:12px 16px;">
+            <i class="bi bi-calendar3" style="color:var(--green-primary);"></i>
+            <h3 style="font-size:13px;">${formatDate(tanggal)}</h3>
+          </div>
+          ${items.map(p => `
+            <div style="padding:12px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;">
+              <div style="width:42px;height:42px;background:${getJenisPresensiColor(p.jenisPresensi)};border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+                ${getJenisPresensiIcon(p.jenisPresensi)}
+              </div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:700;color:var(--gray-800);">${getJenisPresensiLabel(p.jenisPresensi)}</div>
+                <div style="font-size:11px;color:var(--gray-400);">${p.alamat?.substring(0,60) || '-'}</div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <div style="font-size:16px;font-weight:800;font-family:var(--font-mono);color:var(--gray-800);">${p.jam}</div>
+                <span class="badge-custom ${p.statusLokasi === 'Dalam Area' ? 'badge-success' : 'badge-danger'}" style="font-size:10px;">${p.statusLokasi || '-'}</span>
+              </div>
+            </div>`).join('')}
+        </div>`).join('');
+    } else {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📅</div>
+          <div class="empty-title">Tidak ada data</div>
+          <div class="empty-desc">Belum ada riwayat presensi untuk periode yang dipilih</div>
+        </div>`;
+    }
+  } catch(e) {
+    container.innerHTML = '<div class="alert alert-danger">Gagal memuat data</div>';
+  }
+}
+
+// ============================================================
+// IZIN
+// ============================================================
+function renderIzin() {
+  const content = document.getElementById('main-content');
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Pengajuan Izin</h1>
+          <p class="page-subtitle">Ajukan izin, dinas luar, atau setengah hari</p>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-file-earmark-plus" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Form Pengajuan</h3>
+        </div>
+        <div class="card-custom-body">
+          <div class="form-group-custom">
+            <label class="form-label-sm">Jenis Izin</label>
+            <select class="select-custom" id="jenis-izin">
+              <option value="sakit">Sakit</option>
+              <option value="izin_pribadi">Izin Pribadi</option>
+              <option value="dinas_luar">Dinas Luar</option>
+              <option value="setengah_hari">Setengah Hari</option>
+              <option value="cuti">Cuti Tahunan</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;" class="form-group-custom">
+            <div>
+              <label class="form-label-sm">Tanggal Mulai</label>
+              <input type="date" class="input-custom" id="izin-mulai" value="${new Date().toISOString().split('T')[0]}">
+            </div>
+            <div>
+              <label class="form-label-sm">Tanggal Akhir</label>
+              <input type="date" class="input-custom" id="izin-akhir" value="${new Date().toISOString().split('T')[0]}">
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Alasan / Keterangan</label>
+            <textarea class="textarea-custom" id="izin-alasan" placeholder="Jelaskan alasan izin Anda..."></textarea>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Lampiran (Opsional, Foto/Surat)</label>
+            <input type="file" class="input-custom" id="izin-lampiran" accept="image/*,.pdf" style="padding:8px;">
+          </div>
+          <button class="btn-primary-custom w-100 justify-content-center" style="padding:14px;" onclick="submitIzin()" id="btn-submit-izin">
+            <i class="bi bi-send"></i> Kirim Pengajuan
+          </button>
+        </div>
+      </div>
+
+      <div class="card-custom">
+        <div class="card-custom-header">
+          <i class="bi bi-clock-history" style="color:var(--yellow-dark);font-size:18px;"></i>
+          <h3>Riwayat Izin</h3>
+        </div>
+        <div id="riwayat-izin-content"><div class="card-custom-body"><div class="skeleton" style="height:100px;border-radius:8px;"></div></div></div>
+      </div>
+    </div>`;
+  
+  loadRiwayatIzin();
+}
+
+async function submitIzin() {
+  const jenisIzin = document.getElementById('jenis-izin').value;
+  const tanggalMulai = document.getElementById('izin-mulai').value;
+  const tanggalAkhir = document.getElementById('izin-akhir').value;
+  const alasan = document.getElementById('izin-alasan').value.trim();
+  const lampiranFile = document.getElementById('izin-lampiran').files[0];
+  
+  if (!alasan) { showToast('warning', 'Form Tidak Lengkap', 'Alasan izin harus diisi'); return; }
+  
+  const btn = document.getElementById('btn-submit-izin');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Mengirim...';
+  
+  const token = localStorage.getItem('at_token');
+  let lampiranBase64 = null;
+  
+  if (lampiranFile) {
+    lampiranBase64 = await fileToBase64(lampiranFile);
+  }
+  
+  try {
+    const result = await callAPI('ajukanIzin', { token, jenisIzin, tanggalMulai, tanggalAkhir, alasan, lampiranBase64 });
+    
+    if (result.success) {
+      showToast('success', 'Izin Diajukan', 'Pengajuan izin berhasil dikirim ke admin');
+      document.getElementById('izin-alasan').value = '';
+      loadRiwayatIzin();
+    } else {
+      showToast('error', 'Gagal', result.message);
+    }
+  } catch(e) {
+    showToast('error', 'Error', e.message);
+  }
+  
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-send"></i> Kirim Pengajuan';
+}
+
+async function loadRiwayatIzin() {
+  const token = localStorage.getItem('at_token');
+  const container = document.getElementById('riwayat-izin-content');
+  if (!container) return;
+  
+  try {
+    const result = await callAPI('getIzinKaryawan', { token });
+    if (result.success && result.data.length > 0) {
+      container.innerHTML = result.data.slice().reverse().slice(0, 10).map(iz => `
+        <div style="padding:12px 20px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;">
+          <div style="width:40px;height:40px;background:var(--gray-100);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">
+            ${getJenisIzinIcon(iz.jenisIzin)}
+          </div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;">${getJenisIzinLabel(iz.jenisIzin)}</div>
+            <div style="font-size:11px;color:var(--gray-400);">${formatDate(iz.tanggalMulai)} ${iz.tanggalAkhir !== iz.tanggalMulai ? ' - ' + formatDate(iz.tanggalAkhir) : ''}</div>
+            <div style="font-size:11px;color:var(--gray-500);">${iz.alasan?.substring(0, 50)}</div>
+          </div>
+          <span class="badge-custom ${getStatusBadgeClass(iz.status)}">${iz.status}</span>
+        </div>`).join('');
+    } else {
+      container.innerHTML = '<div class="empty-state" style="padding:30px;"><div class="empty-icon" style="font-size:36px;">📋</div><div class="empty-title">Belum ada izin</div></div>';
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// PROFIL
+// ============================================================
+function renderProfil() {
+  const content = document.getElementById('main-content');
+  const u = currentUser;
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="profile-header-bg">
+        <div class="profile-avatar">${u.nama.charAt(0).toUpperCase()}</div>
+      </div>
+      <div style="text-align:center;margin-bottom:24px;">
+        <h2 style="font-size:20px;font-weight:800;margin-bottom:4px;">${u.nama}</h2>
+        <div style="font-size:13px;color:var(--gray-500);">${u.jabatan} • ${u.divisi}</div>
+        <div style="margin-top:8px;">
+          <span class="badge-custom ${u.role === 'admin' ? 'badge-purple' : 'badge-success'}">${u.role === 'admin' ? '👑 Admin' : '👤 Karyawan'}</span>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-person" style="color:var(--green-primary);font-size:18px;"></i>
+          <h3>Informasi Karyawan</h3>
+        </div>
+        <div class="card-custom-body">
+          ${[
+            { icon: 'bi-person-badge', label: 'NIK', value: u.nik },
+            { icon: 'bi-person-workspace', label: 'Jabatan', value: u.jabatan },
+            { icon: 'bi-building', label: 'Divisi', value: u.divisi },
+            { icon: 'bi-envelope', label: 'Email', value: u.email || '-' },
+          ].map(item => `
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--gray-100);">
+              <div style="width:36px;height:36px;background:var(--green-pale);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--green-primary);">
+                <i class="${item.icon}"></i>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--gray-400);font-weight:600;">${item.label}</div>
+                <div style="font-size:13px;font-weight:700;color:var(--gray-800);">${item.value}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-header">
+          <i class="bi bi-lock" style="color:var(--yellow-dark);font-size:18px;"></i>
+          <h3>Ganti Password</h3>
+        </div>
+        <div class="card-custom-body">
+          <div class="form-group-custom">
+            <label class="form-label-sm">Password Lama</label>
+            <input type="password" class="input-custom" id="old-password" placeholder="Masukkan password lama">
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Password Baru</label>
+            <input type="password" class="input-custom" id="new-password" placeholder="Masukkan password baru">
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Konfirmasi Password Baru</label>
+            <input type="password" class="input-custom" id="confirm-password" placeholder="Ulangi password baru">
+          </div>
+          <button class="btn-primary-custom w-100 justify-content-center" onclick="gantiPassword()">
+            <i class="bi bi-check-circle"></i> Simpan Password
+          </button>
+        </div>
+      </div>
+
+      <button class="btn-danger-custom w-100 justify-content-center" style="padding:14px;" onclick="confirmLogout()">
+        <i class="bi bi-box-arrow-right"></i> Keluar Akun
+      </button>
+    </div>`;
+}
+
+async function gantiPassword() {
+  const oldPwd = document.getElementById('old-password').value;
+  const newPwd = document.getElementById('new-password').value;
+  const confirmPwd = document.getElementById('confirm-password').value;
+  
+  if (!oldPwd || !newPwd || !confirmPwd) { showToast('warning', 'Form', 'Semua field harus diisi'); return; }
+  if (newPwd !== confirmPwd) { showToast('error', 'Password', 'Konfirmasi password tidak cocok'); return; }
+  if (newPwd.length < 6) { showToast('warning', 'Password', 'Password minimal 6 karakter'); return; }
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('changePassword', { token, oldPassword: oldPwd, newPassword: newPwd });
+    if (result.success) {
+      showToast('success', 'Berhasil', 'Password berhasil diubah');
+      document.getElementById('old-password').value = '';
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+    } else {
+      showToast('error', 'Gagal', result.message);
+    }
+  } catch(e) {
+    showToast('error', 'Error', e.message);
+  }
+}
+
+// ============================================================
+// ADMIN - DATA KARYAWAN
+// ============================================================
+async function renderDataKaryawan() {
+  const content = document.getElementById('main-content');
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Data Karyawan</h1>
+          <p class="page-subtitle">Manajemen data karyawan</p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary-custom" onclick="showImportModal()">
+            <i class="bi bi-file-earmark-excel"></i> Import
+          </button>
+          <button class="btn-primary-custom" onclick="showTambahKaryawan()">
+            <i class="bi bi-person-plus"></i> Tambah
+          </button>
+        </div>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-body" style="padding:14px;">
+          <div style="display:flex;gap:10px;">
+            <div style="flex:1;position:relative;">
+              <i class="bi bi-search" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--gray-400);"></i>
+              <input type="text" class="input-custom" id="search-karyawan" placeholder="Cari karyawan..." style="padding-left:38px;" oninput="filterKaryawan()">
+            </div>
+            <select class="select-custom" id="filter-divisi" onchange="filterKaryawan()" style="width:150px;">
+              <option value="">Semua Divisi</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="karyawan-list">
+        <div class="skeleton" style="height:300px;border-radius:16px;"></div>
+      </div>
+    </div>
+
+    <!-- Modal Tambah/Edit Karyawan -->
+    <div class="modal-custom" id="modal-karyawan">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header-custom">
+          <h3 class="modal-title-custom" id="modal-karyawan-title">Tambah Karyawan</h3>
+          <button class="modal-close" onclick="closeModal('modal-karyawan')">×</button>
+        </div>
+        <div class="modal-body-custom">
+          <input type="hidden" id="karyawan-id-edit">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group-custom">
+              <label class="form-label-sm">NIK *</label>
+              <input type="text" class="input-custom" id="k-nik" placeholder="Nomor Induk">
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-sm">No. HP</label>
+              <input type="text" class="input-custom" id="k-hp" placeholder="08xx">
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Nama Lengkap *</label>
+            <input type="text" class="input-custom" id="k-nama" placeholder="Nama karyawan">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group-custom">
+              <label class="form-label-sm">Jabatan</label>
+              <input type="text" class="input-custom" id="k-jabatan" placeholder="Jabatan">
+            </div>
+            <div class="form-group-custom">
+              <label class="form-label-sm">Divisi</label>
+              <input type="text" class="input-custom" id="k-divisi" placeholder="Divisi">
+            </div>
+          </div>
+          <div class="form-group-custom">
+            <label class="form-label-sm">Email</label>
+            <input type="email" class="input-custom" id="k-email" placeholder="email@domain.com">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div class="form-group-custom">
+              <label class="form-label-sm">Role</label>
+              <select class="select-custom" id="k-role">
+                <option value="karyawan">Karyawan</option>
+                <option value="admin">Admin</option>
+              </select>
+            </div>
+            <div class="form-group-custom" id="status-group">
+              <label class="form-label-sm">Status</label>
+              <select class="select-custom" id="k-status">
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-custom">
+          <button class="btn-secondary-custom flex-1 justify-content-center" onclick="closeModal('modal-karyawan')">Batal</button>
+          <button class="btn-primary-custom flex-1 justify-content-center" id="btn-simpan-karyawan" onclick="simpanKaryawan()">
+            <i class="bi bi-check"></i> Simpan
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Import Excel -->
+    <div class="modal-custom" id="modal-import">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-header-custom">
+          <h3 class="modal-title-custom">Import Karyawan dari Excel</h3>
+          <button class="modal-close" onclick="closeModal('modal-import')">×</button>
+        </div>
+        <div class="modal-body-custom">
+          <div style="padding:12px;background:var(--yellow-light);border-radius:var(--radius-sm);margin-bottom:16px;font-size:12px;color:var(--gray-700);">
+            <strong>Format Excel:</strong> NIK | Nama | Jabatan | Divisi | No HP | Email<br>
+            Password default = NIK karyawan
+          </div>
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-excel').click()" ondragover="dragover(event)" ondrop="dropped(event)">
+            <div class="drop-icon">📊</div>
+            <div class="drop-text">Klik atau drag file Excel di sini</div>
+            <div class="drop-hint">Format: .xlsx, .xls (maks. 5MB)</div>
+          </div>
+          <input type="file" id="file-excel" accept=".xlsx,.xls" style="display:none;" onchange="readExcelFile(event)">
+          <div id="import-preview" style="margin-top:16px;display:none;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;" id="import-count"></div>
+            <div class="table-custom-wrap" style="max-height:200px;overflow-y:auto;">
+              <table class="table-custom" id="import-table">
+                <thead><tr><th>NIK</th><th>Nama</th><th>Jabatan</th><th>Divisi</th></tr></thead>
+                <tbody id="import-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer-custom">
+          <button class="btn-secondary-custom flex-1 justify-content-center" onclick="closeModal('modal-import')">Batal</button>
+          <button class="btn-primary-custom flex-1 justify-content-center" id="btn-import" onclick="importKaryawan()" disabled>
+            <i class="bi bi-upload"></i> Import
+          </button>
+        </div>
+      </div>
+    </div>`;
+  
+  loadKaryawan();
+}
+
+let allKaryawan = [];
+
+async function loadKaryawan() {
+  const token = localStorage.getItem('at_token');
+  const container = document.getElementById('karyawan-list');
+  
+  try {
+    const result = await callAPI('getKaryawan', { token });
+    if (result.success) {
+      allKaryawan = result.data;
+      
+      const divisis = [...new Set(result.data.map(k => k.divisi).filter(Boolean))];
+      const filterDivisi = document.getElementById('filter-divisi');
+      if (filterDivisi) {
+        filterDivisi.innerHTML = '<option value="">Semua Divisi</option>' + 
+          divisis.map(d => `<option value="${d}">${d}</option>`).join('');
+      }
+      
+      renderKaryawanList(allKaryawan);
+    }
+  } catch(e) {
+    if (container) container.innerHTML = '<div class="alert alert-danger">Gagal memuat data karyawan</div>';
+  }
+}
+
+function filterKaryawan() {
+  const search = document.getElementById('search-karyawan')?.value?.toLowerCase() || '';
+  const divisi = document.getElementById('filter-divisi')?.value || '';
+  
+  const filtered = allKaryawan.filter(k => {
+    const matchSearch = !search || k.nama.toLowerCase().includes(search) || String(k.nik).includes(search);
+    const matchDivisi = !divisi || k.divisi === divisi;
+    return matchSearch && matchDivisi;
+  });
+  
+  renderKaryawanList(filtered);
+}
+
+function renderKaryawanList(list) {
+  const container = document.getElementById('karyawan-list');
+  if (!container) return;
+  
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Tidak ada karyawan</div></div>`;
+    return;
+  }
+  
+  container.innerHTML = `
+    <div style="margin-bottom:12px;font-size:12px;color:var(--gray-500);font-weight:600;">${list.length} karyawan ditemukan</div>
+    <div class="card-custom">
+      ${list.map(k => `
+        <div style="padding:14px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;">
+          <div style="width:44px;height:44px;background:${k.status === 'aktif' ? 'var(--green-primary)' : 'var(--gray-400)'};border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:800;flex-shrink:0;">${k.nama.charAt(0).toUpperCase()}</div>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:13px;font-weight:700;color:var(--gray-800);">${k.nama}</div>
+            <div style="font-size:11px;color:var(--gray-400);">${k.nik} • ${k.jabatan} • ${k.divisi}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
+            <span class="badge-custom ${k.status === 'aktif' ? 'badge-success' : 'badge-gray'}">${k.status}</span>
+            <div style="display:flex;gap:4px;">
+              <button class="nav-btn" style="background:var(--green-pale);color:var(--green-primary);width:28px;height:28px;border-radius:var(--radius-sm);" onclick="editKaryawan('${k.nik}')"><i class="bi bi-pencil" style="font-size:12px;"></i></button>
+              <button class="nav-btn" style="background:#FEF2F2;color:var(--danger);width:28px;height:28px;border-radius:var(--radius-sm);" onclick="hapusKaryawan('${k.nik}','${k.nama}')"><i class="bi bi-trash" style="font-size:12px;"></i></button>
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function showTambahKaryawan() {
+  document.getElementById('modal-karyawan-title').textContent = 'Tambah Karyawan';
+  document.getElementById('karyawan-id-edit').value = '';
+  document.getElementById('k-nik').value = '';
+  document.getElementById('k-nama').value = '';
+  document.getElementById('k-jabatan').value = '';
+  document.getElementById('k-divisi').value = '';
+  document.getElementById('k-email').value = '';
+  document.getElementById('k-hp').value = '';
+  document.getElementById('k-role').value = 'karyawan';
+  document.getElementById('k-status').value = 'aktif';
+  document.getElementById('k-nik').readOnly = false;
+  document.getElementById('status-group').style.display = 'none';
+  openModal('modal-karyawan');
+}
+
+function editKaryawan(nik) {
+  const k = allKaryawan.find(k => String(k.nik) === String(nik));
+  if (!k) return;
+  
+  document.getElementById('modal-karyawan-title').textContent = 'Edit Karyawan';
+  document.getElementById('karyawan-id-edit').value = k.nik;
+  document.getElementById('k-nik').value = k.nik;
+  document.getElementById('k-nama').value = k.nama;
+  document.getElementById('k-jabatan').value = k.jabatan;
+  document.getElementById('k-divisi').value = k.divisi;
+  document.getElementById('k-email').value = k.email;
+  document.getElementById('k-hp').value = k.noHp || '';
+  document.getElementById('k-role').value = k.role || 'karyawan';
+  document.getElementById('k-status').value = k.status;
+  document.getElementById('k-nik').readOnly = true;
+  document.getElementById('status-group').style.display = 'block';
+  openModal('modal-karyawan');
+}
+
+async function simpanKaryawan() {
+  const editNIK = document.getElementById('karyawan-id-edit').value;
+  const nik = document.getElementById('k-nik').value.trim();
+  const nama = document.getElementById('k-nama').value.trim();
+  const jabatan = document.getElementById('k-jabatan').value.trim();
+  const divisi = document.getElementById('k-divisi').value.trim();
+  const email = document.getElementById('k-email').value.trim();
+  const noHp = document.getElementById('k-hp').value.trim();
+  const role = document.getElementById('k-role').value;
+  const status = document.getElementById('k-status').value;
+  
+  if (!nik || !nama) { showToast('warning', 'Form', 'NIK dan Nama wajib diisi'); return; }
+  
+  const btn = document.getElementById('btn-simpan-karyawan');
+  btn.disabled = true;
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const action = editNIK ? 'editKaryawan' : 'tambahKaryawan';
+    const result = await callAPI(action, { token, nik, nama, jabatan, divisi, email, noHp, role, status });
+    
+    if (result.success) {
+      showToast('success', 'Berhasil', result.message);
+      closeModal('modal-karyawan');
+      loadKaryawan();
+    } else {
+      showToast('error', 'Gagal', result.message);
+    }
+  } catch(e) {
+    showToast('error', 'Error', e.message);
+  }
+  btn.disabled = false;
+}
+
+function hapusKaryawan(nik, nama) {
+  showConfirmModal(`Nonaktifkan Karyawan`, `Yakin ingin menonaktifkan ${nama}?`, async () => {
+    const token = localStorage.getItem('at_token');
+    try {
+      const result = await callAPI('hapusKaryawan', { token, nik });
+      if (result.success) {
+        showToast('success', 'Berhasil', result.message);
+        loadKaryawan();
+      }
+    } catch(e) {}
+  });
+}
+
+// Import Excel
+function showImportModal() { openModal('modal-import'); }
+
+function dragover(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragover'); }
+function dropped(e) { 
+  e.preventDefault(); 
+  document.getElementById('drop-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processExcelFile(file);
+}
+
+function readExcelFile(e) {
+  const file = e.target.files[0];
+  if (file) processExcelFile(file);
+}
+
+let importData = [];
+function processExcelFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const wb = XLSX.read(e.target.result, { type: 'array' });
+    const ws = wb.Sheets[wb.SheetNames[0]];
+    const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    
+    importData = [];
+    const tbody = document.getElementById('import-tbody');
+    const preview = document.getElementById('import-preview');
+    const count = document.getElementById('import-count');
+    
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+      if (!row[0] && !row[1]) continue;
+      
+      const k = { nik: String(row[0] || '').trim(), nama: String(row[1] || '').trim(), jabatan: String(row[2] || '').trim(), divisi: String(row[3] || '').trim(), noHp: String(row[4] || '').trim(), email: String(row[5] || '').trim() };
+      if (k.nik && k.nama) importData.push(k);
+    }
+    
+    if (importData.length > 0) {
+      count.textContent = `${importData.length} data siap diimport`;
+      tbody.innerHTML = importData.slice(0, 10).map(k => `<tr><td>${k.nik}</td><td>${k.nama}</td><td>${k.jabatan}</td><td>${k.divisi}</td></tr>`).join('');
+      preview.style.display = 'block';
+      document.getElementById('btn-import').disabled = false;
+      document.getElementById('drop-zone').querySelector('.drop-text').textContent = `✅ ${file.name} (${importData.length} data)`;
+    } else {
+      showToast('error', 'File Invalid', 'Tidak ada data valid di file Excel');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function importKaryawan() {
+  if (importData.length === 0) return;
+  
+  const btn = document.getElementById('btn-import');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-sm"></span> Mengimport...';
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('importKaryawan', { token, karyawanList: importData });
+    if (result.success) {
+      showToast('success', 'Import Selesai', result.message);
+      closeModal('modal-import');
+      loadKaryawan();
+    } else {
+      showToast('error', 'Gagal', result.message);
+    }
+  } catch(e) {
+    showToast('error', 'Error', e.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="bi bi-upload"></i> Import';
+}
+
+// ============================================================
+// ADMIN - REKAP PRESENSI
+// ============================================================
+async function renderRekapPresensi() {
+  const content = document.getElementById('main-content');
+  const now = new Date();
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Rekap Presensi</h1>
+          <p class="page-subtitle">Laporan kehadiran karyawan</p>
+        </div>
+        <button class="btn-yellow-custom" onclick="exportRekapExcel()">
+          <i class="bi bi-file-earmark-excel"></i> Export Excel
+        </button>
+      </div>
+
+      <div class="card-custom mb-3">
+        <div class="card-custom-body" style="padding:14px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+            <div>
+              <label class="form-label-sm">Bulan</label>
+              <select class="select-custom" id="rekap-bulan">
+                ${Array.from({length:12},(_,i) => `<option value="${i+1}" ${i+1 === now.getMonth()+1 ? 'selected' : ''}>${['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][i]}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="form-label-sm">Tahun</label>
+              <select class="select-custom" id="rekap-tahun">
+                ${[now.getFullYear()-1, now.getFullYear()].map(y => `<option value="${y}" ${y === now.getFullYear() ? 'selected' : ''}>${y}</option>`).join('')}
+              </select>
+            </div>
+            <div>
+              <label class="form-label-sm">Divisi</label>
+              <select class="select-custom" id="rekap-divisi">
+                <option value="">Semua</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-primary-custom mt-3 w-100 justify-content-center" onclick="loadRekap()">
+            <i class="bi bi-search"></i> Tampilkan Rekap
+          </button>
+        </div>
+      </div>
+
+      <div id="rekap-content"></div>
+    </div>`;
+  
+  loadRekap();
+}
+
+async function loadRekap() {
+  const token = localStorage.getItem('at_token');
+  const bulan = document.getElementById('rekap-bulan')?.value;
+  const tahun = document.getElementById('rekap-tahun')?.value;
+  const divisi = document.getElementById('rekap-divisi')?.value;
+  const container = document.getElementById('rekap-content');
+  
+  if (!container) return;
+  container.innerHTML = '<div class="skeleton" style="height:300px;border-radius:16px;"></div>';
+  
+  try {
+    const result = await callAPI('getRekapPresensi', { token, bulan, tahun, divisi });
+    if (result.success && result.data.length > 0) {
+      container.innerHTML = `
+        <div class="table-custom-wrap">
+          <table class="table-custom">
+            <thead><tr>
+              <th>Nama</th>
+              <th>Divisi</th>
+              <th>Hadir</th>
+              <th>Izin</th>
+              <th>Dinas</th>
+              <th>½ Hari</th>
+              <th>Terlambat</th>
+            </tr></thead>
+            <tbody>
+              ${result.data.map(r => `
+                <tr>
+                  <td><div style="font-weight:700;">${r.nama}</div><div style="font-size:11px;color:var(--gray-400);">${r.jabatan}</div></td>
+                  <td>${r.divisi}</td>
+                  <td><span style="color:var(--green-primary);font-weight:700;">${r.hadir}</span></td>
+                  <td><span style="color:var(--yellow-dark);font-weight:700;">${r.izin}</span></td>
+                  <td><span style="color:var(--info);font-weight:700;">${r.dinasLuar}</span></td>
+                  <td><span style="color:#8B5CF6;font-weight:700;">${r.setengahHari}</span></td>
+                  <td><span style="color:var(--danger);font-weight:700;">${r.terlambat}</span></td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    } else {
+      container.innerHTML = `<div class="empty-state"><div class="empty-icon">📊</div><div class="empty-title">Tidak ada data rekap</div></div>`;
+    }
+  } catch(e) {
+    container.innerHTML = '<div class="alert alert-danger">Gagal memuat rekap</div>';
+  }
+}
+
+// ============================================================
+// ADMIN - MANAJEMEN IZIN
+// ============================================================
+async function renderIzinManagement() {
+  const content = document.getElementById('main-content');
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Manajemen Izin</h1>
+          <p class="page-subtitle">Approve/Tolak pengajuan izin karyawan</p>
+        </div>
+      </div>
+      <div id="izin-management-content"><div class="skeleton" style="height:300px;border-radius:16px;"></div></div>
+    </div>`;
+  
+  loadIzinPending();
+}
+
+async function loadIzinPending() {
+  const token = localStorage.getItem('at_token');
+  const container = document.getElementById('izin-management-content');
+  
+  try {
+    const result = await callAPI('getIzinPending', { token });
+    
+    if (result.success) {
+      if (result.data.length === 0) {
+        container.innerHTML = `<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">Semua izin sudah diproses</div><div class="empty-desc">Tidak ada pengajuan izin yang menunggu</div></div>`;
+        return;
+      }
+      
+      document.getElementById('notif-badge').setAttribute('data-count', result.data.length);
+      
+      container.innerHTML = result.data.map(iz => `
+        <div class="card-custom mb-2">
+          <div class="card-custom-body">
+            <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;">
+              <div style="width:44px;height:44px;background:var(--green-primary);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:800;flex-shrink:0;">${iz.nama.charAt(0).toUpperCase()}</div>
+              <div style="flex:1;">
+                <div style="font-size:14px;font-weight:800;">${iz.nama}</div>
+                <div style="font-size:11px;color:var(--gray-400);">${iz.divisi}</div>
+              </div>
+              <span class="badge-custom badge-warning">Pending</span>
+            </div>
+            <div style="padding:12px;background:var(--gray-50);border-radius:var(--radius-sm);margin-bottom:12px;font-size:13px;">
+              <div><strong>${getJenisIzinLabel(iz.jenisIzin)}</strong></div>
+              <div style="color:var(--gray-500);">📅 ${formatDate(iz.tanggalMulai)}${iz.tanggalAkhir !== iz.tanggalMulai ? ' - ' + formatDate(iz.tanggalAkhir) : ''}</div>
+              <div style="color:var(--gray-600);margin-top:4px;">${iz.alasan}</div>
+            </div>
+            ${iz.lampiran ? `<a href="${iz.lampiran}" target="_blank" class="btn-secondary-custom mb-3" style="font-size:12px;padding:6px 12px;"><i class="bi bi-paperclip"></i> Lihat Lampiran</a>` : ''}
+            <div style="display:flex;gap:10px;">
+              <button class="btn-danger-custom flex-1 justify-content-center" style="padding:10px;" onclick="processIzin('${iz.id}', 'reject')">
+                <i class="bi bi-x-circle"></i> Tolak
+              </button>
+              <button class="btn-primary-custom flex-1 justify-content-center" style="padding:10px;" onclick="processIzin('${iz.id}', 'approve')">
+                <i class="bi bi-check-circle"></i> Setujui
+              </button>
+            </div>
+          </div>
+        </div>`).join('');
+    }
+  } catch(e) {
+    container.innerHTML = '<div class="alert alert-danger">Gagal memuat data izin</div>';
+  }
+}
+
+async function processIzin(izinId, action) {
+  const catatan = action === 'reject' ? prompt('Alasan penolakan (opsional):') : null;
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const apiAction = action === 'approve' ? 'approveIzin' : 'rejectIzin';
+    const result = await callAPI(apiAction, { token, izinId, catatan: catatan || '' });
+    
+    if (result.success) {
+      showToast('success', action === 'approve' ? 'Izin Disetujui ✅' : 'Izin Ditolak', result.message);
+      loadIzinPending();
+    } else {
+      showToast('error', 'Gagal', result.message);
+    }
+  } catch(e) {
+    showToast('error', 'Error', e.message);
+  }
+}
+
+// ============================================================
+// ADMIN - PENGATURAN
+// ============================================================
+async function renderPengaturan() {
+  const content = document.getElementById('main-content');
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div><h1 class="page-title">Pengaturan Sistem</h1><p class="page-subtitle">Konfigurasi kantor dan presensi</p></div>
+      </div>
+      <div id="pengaturan-content"><div class="skeleton" style="height:400px;border-radius:16px;"></div></div>
+    </div>`;
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('getPengaturan', { token });
+    if (result.success) {
+      const p = result.data;
+      document.getElementById('pengaturan-content').innerHTML = `
+        <div class="card-custom mb-3">
+          <div class="card-custom-header"><i class="bi bi-building" style="color:var(--green-primary);font-size:18px;"></i><h3>Informasi Kantor</h3></div>
+          <div class="card-custom-body">
+            <div class="form-group-custom"><label class="form-label-sm">Nama Perusahaan</label><input type="text" class="input-custom" id="p-nama" value="${p.kantorNama || ''}"></div>
+            <div class="form-group-custom"><label class="form-label-sm">Alamat Kantor</label><textarea class="textarea-custom" id="p-alamat" style="min-height:70px;">${p.kantorAlamat || ''}</textarea></div>
+          </div>
+        </div>
+        <div class="card-custom mb-3">
+          <div class="card-custom-header"><i class="bi bi-geo-alt" style="color:var(--danger);font-size:18px;"></i><h3>Lokasi & Radius</h3></div>
+          <div class="card-custom-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="form-group-custom"><label class="form-label-sm">Latitude Kantor</label><input type="text" class="input-custom" id="p-lat" value="${p.kantorLatitude || ''}"></div>
+              <div class="form-group-custom"><label class="form-label-sm">Longitude Kantor</label><input type="text" class="input-custom" id="p-lng" value="${p.kantorLongitude || ''}"></div>
+            </div>
+            <div class="form-group-custom"><label class="form-label-sm">Radius (meter)</label>
+              <select class="select-custom" id="p-radius">
+                ${[50,100,150,200,300,500].map(r => `<option value="${r}" ${r == p.radiusKantor ? 'selected' : ''}>${r} meter</option>`).join('')}
+              </select>
+            </div>
+            <button class="btn-secondary-custom" onclick="getLocationForSetting()"><i class="bi bi-crosshair"></i> Gunakan Lokasi Saat Ini</button>
+          </div>
+        </div>
+        <div class="card-custom mb-3">
+          <div class="card-custom-header"><i class="bi bi-clock" style="color:var(--yellow-dark);font-size:18px;"></i><h3>Jam Kerja</h3></div>
+          <div class="card-custom-body">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div class="form-group-custom"><label class="form-label-sm">Jam Masuk</label><input type="time" class="input-custom" id="p-jam-masuk" value="${p.jamMasuk || '08'}:${p.menitMasuk || '00'}"></div>
+              <div class="form-group-custom"><label class="form-label-sm">Jam Pulang</label><input type="time" class="input-custom" id="p-jam-pulang" value="${p.jamPulang || '17'}:${p.menitPulang || '00'}"></div>
+            </div>
+            <div class="form-group-custom"><label class="form-label-sm">Toleransi Terlambat (menit)</label><input type="number" class="input-custom" id="p-toleransi" value="${p.toleransiTerlambat || 15}" min="0" max="60"></div>
+          </div>
+        </div>
+        <button class="btn-primary-custom w-100 justify-content-center" style="padding:14px;" onclick="savePengaturan()">
+          <i class="bi bi-check-circle"></i> Simpan Pengaturan
+        </button>`;
+    }
+  } catch(e) {}
+}
+
+async function savePengaturan() {
+  const token = localStorage.getItem('at_token');
+  const jamMasuk = (document.getElementById('p-jam-masuk')?.value || '08:00').split(':');
+  const jamPulang = (document.getElementById('p-jam-pulang')?.value || '17:00').split(':');
+  
+  const pengaturan = {
+    kantorNama: document.getElementById('p-nama')?.value || '',
+    kantorAlamat: document.getElementById('p-alamat')?.value || '',
+    kantorLatitude: document.getElementById('p-lat')?.value || '',
+    kantorLongitude: document.getElementById('p-lng')?.value || '',
+    radiusKantor: document.getElementById('p-radius')?.value || '100',
+    jamMasuk: jamMasuk[0], menitMasuk: jamMasuk[1],
+    jamPulang: jamPulang[0], menitPulang: jamPulang[1],
+    toleransiTerlambat: document.getElementById('p-toleransi')?.value || '15'
+  };
+  
+  try {
+    const result = await callAPI('savePengaturan', { token, pengaturan });
+    if (result.success) showToast('success', 'Tersimpan ✅', result.message);
+    else showToast('error', 'Gagal', result.message);
+  } catch(e) { showToast('error', 'Error', e.message); }
+}
+
+function getLocationForSetting() {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    document.getElementById('p-lat').value = pos.coords.latitude.toFixed(6);
+    document.getElementById('p-lng').value = pos.coords.longitude.toFixed(6);
+    showToast('success', 'Lokasi Didapat', `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+  }, () => { showToast('error', 'GPS Error', 'Tidak dapat mengambil lokasi'); });
+}
+
+// ============================================================
+// ADMIN - MONITORING LOKASI
+// ============================================================
+async function renderMonitoringLokasi() {
+  const content = document.getElementById('main-content');
+  
+  content.innerHTML = `
+    <div class="fade-in">
+      <div class="page-header">
+        <div><h1 class="page-title">Monitoring Lokasi</h1><p class="page-subtitle">Sebaran lokasi presensi karyawan hari ini</p></div>
+      </div>
+      <div id="monitoring-content"><div class="skeleton" style="height:400px;border-radius:16px;"></div></div>
+    </div>`;
+  
+  const token = localStorage.getItem('at_token');
+  try {
+    const result = await callAPI('getPresensiHariIni', { token });
+    if (result.success && result.data.length > 0) {
+      const withLocation = result.data.filter(p => p.latitude && p.longitude);
+      
+      document.getElementById('monitoring-content').innerHTML = `
+        <div class="card-custom mb-3">
+          <div style="padding:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+            <div><div style="font-size:24px;font-weight:800;color:var(--green-primary);">${result.data.length}</div><div style="font-size:11px;color:var(--gray-400);font-weight:600;">Total Presensi</div></div>
+            <div><div style="font-size:24px;font-weight:800;color:var(--success);">${result.data.filter(p => p.statusLokasi === 'Dalam Area').length}</div><div style="font-size:11px;color:var(--gray-400);font-weight:600;">Dalam Area</div></div>
+            <div><div style="font-size:24px;font-weight:800;color:var(--danger);">${result.data.filter(p => p.statusLokasi === 'Luar Area').length}</div><div style="font-size:11px;color:var(--gray-400);font-weight:600;">Luar Area</div></div>
+          </div>
+        </div>
+        <div class="card-custom">
+          ${result.data.slice(0, 20).map(p => `
+            <div style="padding:12px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;">
+              <div style="width:40px;height:40px;background:${p.statusLokasi === 'Dalam Area' ? 'var(--green-pale)' : '#FEF2F2'};border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:18px;">${getJenisPresensiIcon(p.jenisPresensi)}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;font-weight:700;">${p.nama}</div>
+                <div style="font-size:11px;color:var(--gray-400);">${p.jam} • ${p.alamat?.substring(0,60) || 'Tanpa lokasi'}</div>
+              </div>
+              <div style="text-align:right;flex-shrink:0;">
+                <span class="badge-custom ${p.statusLokasi === 'Dalam Area' ? 'badge-success' : 'badge-danger'}">${p.statusLokasi || '-'}</span>
+                ${p.mapsLink ? `<div style="margin-top:4px;"><a href="${p.mapsLink}" target="_blank" style="font-size:11px;color:var(--info);">📍 Maps</a></div>` : ''}
+              </div>
+            </div>`).join('')}
+        </div>`;
+    } else {
+      document.getElementById('monitoring-content').innerHTML = `<div class="empty-state"><div class="empty-icon">🗺️</div><div class="empty-title">Belum ada presensi hari ini</div></div>`;
+    }
+  } catch(e) {}
+}
+
+// ============================================================
+// UTILITY - EXPORT
+// ============================================================
+async function exportRekapExcel() {
+  const token = localStorage.getItem('at_token');
+  const bulan = document.getElementById('rekap-bulan')?.value;
+  const tahun = document.getElementById('rekap-tahun')?.value;
+  
+  showToast('info', 'Export', 'Mempersiapkan file Excel...');
+  
+  try {
+    const result = await callAPI('getRekapPresensi', { token, bulan, tahun });
+    if (result.success && result.data.length > 0) {
+      const wsData = [['NIK', 'Nama', 'Jabatan', 'Divisi', 'Hadir', 'Izin', 'Dinas Luar', 'Setengah Hari', 'Terlambat', 'Tidak Hadir']];
+      result.data.forEach(r => wsData.push([r.nik, r.nama, r.jabatan, r.divisi, r.hadir, r.izin, r.dinasLuar, r.setengahHari, r.terlambat, r.tidakHadir || 0]));
+      
+      const wb = XLSX.utils.book_new();
+      const ws = XLSX.utils.aoa_to_sheet(wsData);
+      XLSX.utils.book_append_sheet(wb, ws, 'Rekap Presensi');
+      XLSX.writeFile(wb, `Rekap_Presensi_${bulan}_${tahun}.xlsx`);
+      showToast('success', 'Export Berhasil', 'File Excel berhasil diunduh');
+    }
+  } catch(e) { showToast('error', 'Export Gagal', e.message); }
+}
+
+// ============================================================
+// UI HELPERS
+// ============================================================
+function startClock() {
+  const el = document.getElementById('live-clock');
+  if (!el) return;
+  
+  const update = () => {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2,'0');
+    const s = String(now.getSeconds()).padStart(2,'0');
+    if (el) el.textContent = `${h}:${m}:${s}`;
+  };
+  update();
+  const timer = setInterval(() => {
+    if (!document.getElementById('live-clock')) { clearInterval(timer); return; }
+    update();
+  }, 1000);
+}
+
+function showToast(type, title, message) {
+  const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast-item ${type}`;
+  toast.innerHTML = `
+    <span class="toast-icon">${icons[type]}</span>
+    <div class="toast-text">
+      <div class="toast-title">${title}</div>
+      ${message ? `<div class="toast-msg">${message}</div>` : ''}
+    </div>
+    <button class="toast-close" onclick="this.parentElement.remove()">×</button>`;
+  container.appendChild(toast);
+  setTimeout(() => { if (toast.parentElement) toast.remove(); }, 4000);
+}
+
+function openModal(id) {
+  document.getElementById(id)?.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(id) {
+  document.getElementById(id)?.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function showConfirmModal(title, message, onConfirm) {
+  const modal = document.createElement('div');
+  modal.className = 'modal-custom open';
+  modal.innerHTML = `
+    <div class="modal-sheet" style="max-height:auto;">
+      <div class="modal-handle"></div>
+      <div class="modal-body-custom" style="text-align:center;padding:28px;">
+        <div style="font-size:48px;margin-bottom:12px;">🤔</div>
+        <h3 style="font-size:17px;font-weight:800;margin-bottom:8px;">${title}</h3>
+        <p style="font-size:14px;color:var(--gray-500);margin-bottom:24px;">${message}</p>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-secondary-custom flex-1 justify-content-center" onclick="this.closest('.modal-custom').remove();document.body.style.overflow=''">Batal</button>
+          <button class="btn-danger-custom flex-1 justify-content-center" id="confirm-ok">Ya, Lanjutkan</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  document.body.style.overflow = 'hidden';
+  
+  modal.querySelector('#confirm-ok').onclick = () => {
+    modal.remove();
+    document.body.style.overflow = '';
+    onConfirm();
+  };
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) { modal.remove(); document.body.style.overflow = ''; }
+  });
+}
+
+// ============================================================
+// FORMATTERS & HELPERS
+// ============================================================
+function formatDate(d) {
+  if (!d) return '-';
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const dt = new Date(d);
+  if (isNaN(dt)) return d;
+  return `${dt.getDate()} ${months[dt.getMonth()]} ${dt.getFullYear()}`;
+}
+
+function getJenisPresensiLabel(j) {
+  const m = { masuk:'Masuk Kerja', pulang:'Pulang Kerja', izin:'Izin', setengah_hari:'Setengah Hari', dinas_luar:'Dinas Luar', dinas_luar_pulang:'Pulang Dinas' };
+  return m[j] || j;
+}
+
+function getJenisPresensiIcon(j) {
+  const m = { masuk:'🏢', pulang:'🏠', izin:'📋', setengah_hari:'⏰', dinas_luar:'🚗' };
+  return m[j] || '📍';
+}
+
+function getJenisPresensiColor(j) {
+  const m = { masuk:'var(--green-pale)', pulang:'var(--yellow-light)', izin:'#EDE9FE', setengah_hari:'#DBEAFE', dinas_luar:'#D1FAE5' };
+  return m[j] || 'var(--gray-100)';
+}
+
+function getJenisIzinLabel(j) {
+  const m = { sakit:'Sakit', izin_pribadi:'Izin Pribadi', dinas_luar:'Dinas Luar', setengah_hari:'Setengah Hari', cuti:'Cuti Tahunan' };
+  return m[j] || j;
+}
+
+function getJenisIzinIcon(j) {
+  const m = { sakit:'🏥', izin_pribadi:'📋', dinas_luar:'🚗', setengah_hari:'⏰', cuti:'🌴' };
+  return m[j] || '📋';
+}
+
+function getStatusBadgeClass(s) {
+  const m = { pending:'badge-warning', disetujui:'badge-success', ditolak:'badge-danger', aktif:'badge-success', nonaktif:'badge-gray' };
+  return m[String(s).toLowerCase()] || 'badge-gray';
+}
+
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('login-page')?.style.display !== 'none') {
+    handleLogin();
+  }
+});
+
+document.addEventListener('click', (e) => {
+  if (e.target.classList.contains('modal-custom')) {
+    e.target.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+});
+
+// PWA Install
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  const installBtn = document.createElement('button');
+  installBtn.className = 'btn-yellow-custom';
+  installBtn.style.cssText = 'position:fixed;bottom:90px;right:16px;z-index:999;padding:10px 16px;font-size:12px;';
+  installBtn.innerHTML = '📱 Install App';
+  installBtn.onclick = async () => {
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') installBtn.remove();
+    deferredPrompt = null;
+  };
+  document.body.appendChild(installBtn);
+  setTimeout(() => installBtn.remove(), 10000);
+});
+</script>
+</body>
+</html>
