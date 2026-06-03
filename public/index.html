@@ -1151,7 +1151,7 @@ body {
 // ============================================================
 
 // GANTI URL INI DENGAN URL DEPLOY BACKEND GAS ANDA
-const GAS_URL = window.location.origin + '/api/proxy';
+const GAS_URL = '/api/proxy';
 
 let currentUser = null;
 let currentPage = '';
@@ -1167,22 +1167,30 @@ async function callAPI(action, data = {}) {
   try {
     const response = await fetch(GAS_URL, {
       method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action, data })
     });
-    
+
+    // Cek status HTTP
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
+      let errorMsg = `HTTP ${response.status}`;
+      try {
+        const errText = await response.text();
+        errorMsg += ` - ${errText.substring(0, 100)}`;
+      } catch(e) {}
+      throw new Error(errorMsg);
     }
-    
+
     const result = await response.json();
+    if (!result || typeof result !== 'object') {
+      throw new Error('Response bukan objek JSON yang valid');
+    }
     return result;
   } catch (error) {
-    console.error('API call failed:', error);
-    return { success: false, message: 'Gagal terhubung ke server: ' + error.message };
+    console.error('[API] Gagal:', error);
+    // Tampilkan toast error yang lebih jelas
+    showToast('error', 'Koneksi Gagal', error.message);
+    return { success: false, message: error.message };
   }
 }
 
